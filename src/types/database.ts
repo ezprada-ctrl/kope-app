@@ -26,6 +26,106 @@ export type LossClassification = "normal" | "kelalaian" | "fraud";
 
 export type JenisUsaha = "perorangan" | "cv" | "pt";
 
+export type JenisAkad = "mudharabah" | "musyarakah" | "wakalah" | "lainnya";
+
+export type BasisPerhitungan =
+  | "gross_margin"
+  | "net_profit_after_direct_cost"
+  | "net_profit_after_all_cost";
+
+export type SchemeStatus = "draft" | "active" | "archived";
+
+/**
+ * Pihak penerima bagi hasil. Sengaja terpisah dari role login: role bisa
+ * berubah, dan mengikat uang ke role membuat perubahan akses diam-diam
+ * mengubah siapa yang dibayar.
+ */
+export type Party = {
+  id: string;
+  kode: string;
+  nama: string;
+  profile_id: string | null;
+  aktif: boolean;
+  urutan: number;
+  catatan: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Contract = {
+  id: string;
+  nomor: string | null;
+  jenis_akad: JenisAkad;
+  nama: string;
+  pihak_pertama: string | null;
+  pihak_kedua: string | null;
+  tanggal_mulai: string;
+  tanggal_akhir: string | null;
+  dokumen_url: string | null;
+  catatan: string | null;
+  dicatat_oleh: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProfitScheme = {
+  id: string;
+  nama_skema: string;
+  keterangan: string | null;
+  basis_perhitungan: BasisPerhitungan;
+  deal_type_target: DealType;
+  status: SchemeStatus;
+  berlaku_dari: string;
+  berlaku_sampai: string | null;
+  contract_id: string | null;
+  /** Daftar nama kolom biaya di `units` yang boleh dipotong sebelum bagi hasil. */
+  whitelist_biaya: string[];
+  dibuat_oleh: string | null;
+  disetujui_oleh: string | null;
+  disetujui_pada: string | null;
+  dokumen_persetujuan_url: string | null;
+  created_at: string;
+  updated_at: string;
+  locked_at: string | null;
+};
+
+export type ProfitSchemeTier = {
+  id: string;
+  scheme_id: string;
+  /** 1 = pembagian pertama, 2 = dari sisa level 1, dst. */
+  level: number;
+  pihak_id: string;
+  persentase: number;
+  urutan: number;
+  created_at: string;
+  updated_at: string;
+};
+
+/** Satu baris tier di dalam `snapshot_json`. */
+export type SnapshotTier = {
+  level: number;
+  pihak_id: string;
+  pihak_kode: string;
+  pihak_nama: string;
+  persentase: number;
+  urutan: number;
+};
+
+/**
+ * Nisbah yang dikunci ke unit. Perhitungan profit WAJIB baca dari sini —
+ * join live ke `profit_scheme_tiers` di luar preview/simulator adalah bug,
+ * karena skema induknya bisa diarsipkan atau diganti.
+ */
+export type UnitProfitSnapshot = {
+  unit_id: string;
+  scheme_id: string;
+  snapshot_json: SnapshotTier[];
+  basis_perhitungan_snapshot: BasisPerhitungan;
+  whitelist_biaya_snapshot: string[];
+  funding_source_at_snapshot: FundingSource;
+  dikunci_pada: string;
+};
+
 export type UnitTipe = "baru" | "bekas";
 
 export type UnitStatus =
@@ -463,6 +563,8 @@ type Generated =
   | "jumlah_dikembalikan"
   | "deal_type"
   | "realized_loss"
+  | "whitelist_biaya"
+  | "dikunci_pada"
   // punya DEFAULT di DB
   | "status"
   | "aktif"
@@ -509,6 +611,11 @@ export type Database = {
       cancellation_deposits: Table<CancellationDeposit>;
       loss_components: Table<LossComponent>;
       business_entity_config: Table<BusinessEntityConfig>;
+      parties: Table<Party>;
+      contracts: Table<Contract>;
+      profit_schemes: Table<ProfitScheme>;
+      profit_scheme_tiers: Table<ProfitSchemeTier>;
+      unit_profit_snapshot: Table<UnitProfitSnapshot>;
       cancellation_loss_items: Table<CancellationLossItem>;
       refunds: Table<Refund>;
       profit_share_settings: Table<ProfitShareSetting>;
@@ -603,6 +710,9 @@ export type Database = {
       funding_source: FundingSource;
       loss_classification: LossClassification;
       jenis_usaha: JenisUsaha;
+      jenis_akad: JenisAkad;
+      basis_perhitungan: BasisPerhitungan;
+      scheme_status: SchemeStatus;
       unit_tipe: UnitTipe;
       unit_status: UnitStatus;
       ledger_tipe: LedgerTipe;
