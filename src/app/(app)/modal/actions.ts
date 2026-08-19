@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { LedgerTipe } from "@/types/database";
 
@@ -17,8 +17,8 @@ export async function catatLedger(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    return { error: "Hanya admin yang bisa mencatat pergerakan modal." };
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa mencatat pergerakan modal." };
   }
 
   const pemodal_id = String(formData.get("pemodal_id") ?? "");

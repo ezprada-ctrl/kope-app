@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 import { PengeluaranForm } from "@/components/pengeluaran-form";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 
 export const metadata = { title: "Biaya operasional" };
 
 export default async function PengeluaranPage() {
-  await requireRole("admin");
+  await requirePenulis();
 
   return (
     <div className="space-y-5">

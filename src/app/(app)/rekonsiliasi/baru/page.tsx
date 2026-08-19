@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 import RekonsiliasiForm from "@/components/rekonsiliasi-form";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 
 export const metadata = { title: "Rekonsiliasi baru" };
 
 export default async function RekonsiliasiBaruPage() {
-  await requireRole("admin");
+  await requirePenulis();
 
   return (
     <div className="space-y-5">

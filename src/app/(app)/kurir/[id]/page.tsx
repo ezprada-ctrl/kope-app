@@ -2,14 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { KurirForm } from "@/components/kurir-forms";
-import { requireRole } from "@/lib/auth";
+import { requireOrangDalam } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Edit kurir" };
 
 export default async function KurirEditPage(props: PageProps<"/kurir/[id]">) {
   const { id } = await props.params;
-  await requireRole("admin");
+  await requireOrangDalam();
 
   const supabase = await createClient();
   const { data: kurir } = await supabase

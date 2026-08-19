@@ -10,7 +10,13 @@
  * finansial di client lalu menimpanya ke DB.
  */
 
-export type UserRole = "admin" | "owner_partner" | "pemodal";
+export type UserRole = "super_admin" | "admin" | "owner_partner" | "pemodal";
+
+/** Jenis akad per unit. `mandiri_internal` tidak boleh terlihat pemodal. */
+export type DealType = "mudharabah" | "mandiri_internal" | "konsinyasi_fee";
+
+/** Menentukan kapan nisbah di-snapshot ke unit. */
+export type FundingSource = "direct_capital_call" | "pool";
 
 export type UnitTipe = "baru" | "bekas";
 
@@ -83,6 +89,11 @@ export type Unit = {
   kondisi: string | null;
   imei: string | null;
   pemodal_id: string | null;
+  deal_type: DealType;
+  funding_source: FundingSource | null;
+  custody_holder: string | null;
+  risk_bearer: string | null;
+  handover_document: string | null;
   harga_beli: number;
   biaya_kurir_ambil: number;
   biaya_refurbish: number;
@@ -388,6 +399,7 @@ type Generated =
   | "admin_percentage"
   | "urutan"
   | "delta"
+  | "deal_type"
   // punya DEFAULT di DB
   | "status"
   | "aktif"
@@ -521,6 +533,8 @@ export type Database = {
     };
     Enums: {
       user_role: UserRole;
+      deal_type: DealType;
+      funding_source: FundingSource;
       unit_tipe: UnitTipe;
       unit_status: UnitStatus;
       ledger_tipe: LedgerTipe;

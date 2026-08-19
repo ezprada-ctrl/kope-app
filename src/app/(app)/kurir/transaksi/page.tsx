@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 import { TransaksiKurirForm } from "@/components/kurir-forms";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Transaksi kurir" };
 
 export default async function TransaksiKurirPage() {
-  await requireRole("admin");
+  await requirePenulis();
 
   const supabase = await createClient();
   const [{ data: kurirs }, { data: units }] = await Promise.all([

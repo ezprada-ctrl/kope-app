@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export type FormState = { error?: string; ok?: string } | null;
@@ -12,8 +12,8 @@ export async function ubahPorsiPemodal(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    return { error: "Hanya admin yang bisa mengubah skema bagi hasil." };
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa mengubah skema bagi hasil." };
   }
 
   const raw = String(formData.get("pemodal_percentage") ?? "").trim();

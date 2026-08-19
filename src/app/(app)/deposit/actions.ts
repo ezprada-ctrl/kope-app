@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { CancellationPayer, CancellationStatus } from "@/types/database";
 
@@ -16,8 +16,8 @@ export async function catatDeposit(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    return { error: "Hanya admin yang bisa mencatat deposit." };
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa mencatat deposit." };
   }
 
   const unit_id = String(formData.get("unit_id") ?? "").trim();
@@ -64,8 +64,8 @@ export async function resolveDeposit(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    return { error: "Hanya admin yang bisa menyelesaikan deposit." };
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa menyelesaikan deposit." };
   }
 
   const id = String(formData.get("id") ?? "").trim();

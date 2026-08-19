@@ -31,7 +31,7 @@ export async function simpanKurir(
   formData: FormData,
 ): Promise<FormState> {
   if (!(await pastikanAdmin())) {
-    return { error: "Hanya admin yang bisa mengelola kurir." };
+    return { error: "Hanya super admin yang bisa mengelola kurir." };
   }
 
   const nama = String(formData.get("nama") ?? "").trim();
@@ -68,7 +68,7 @@ export async function simpanTransaksiKurir(
   formData: FormData,
 ): Promise<FormState> {
   if (!(await pastikanAdmin())) {
-    return { error: "Hanya admin yang bisa mencatat transaksi kurir." };
+    return { error: "Hanya super admin yang bisa mencatat transaksi kurir." };
   }
 
   const courier_id = String(formData.get("courier_id") ?? "").trim();

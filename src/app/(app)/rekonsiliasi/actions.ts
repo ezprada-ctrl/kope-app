@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export type FormState = { error?: string } | null;
@@ -13,8 +13,8 @@ export async function catatRekonsiliasi(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    return { error: "Hanya admin yang bisa mencatat rekonsiliasi." };
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa mencatat rekonsiliasi." };
   }
 
   const tanggal = String(formData.get("tanggal") ?? "").trim();

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import UnitForm from "@/components/unit-form";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ubahUnit } from "../../actions";
 
@@ -12,7 +12,7 @@ export default async function UnitEditPage(
   props: PageProps<"/unit/[id]/edit">,
 ) {
   const { id } = await props.params;
-  await requireRole("admin");
+  await requirePenulis();
 
   const supabase = await createClient();
 

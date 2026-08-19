@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 import { KurirForm } from "@/components/kurir-forms";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 
 export const metadata = { title: "Kurir baru" };
 
 export default async function KurirBaruPage() {
-  await requireRole("admin");
+  await requirePenulis();
 
   return (
     <div className="space-y-5">

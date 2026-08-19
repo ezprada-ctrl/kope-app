@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 import LedgerForm from "@/components/ledger-form";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Catat modal" };
 
 export default async function ModalBaruPage() {
-  await requireRole("admin");
+  await requirePenulis();
 
   const supabase = await createClient();
 

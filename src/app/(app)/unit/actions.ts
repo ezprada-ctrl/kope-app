@@ -3,18 +3,23 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import {
   BUTUH_HARGA_JUAL,
   bolehTransisi,
   UNIT_STATUS_LABEL,
 } from "@/lib/unit-status";
-import type { UnitStatus, UnitTipe } from "@/types/database";
+import type { DealType, UnitStatus, UnitTipe } from "@/types/database";
 
 export type FormState = { error?: string } | null;
 
 const TIPE_VALID: UnitTipe[] = ["baru", "bekas"];
+const DEAL_TYPE_VALID: DealType[] = [
+  "mudharabah",
+  "mandiri_internal",
+  "konsinyasi_fee",
+];
 
 /** Ambil angka rupiah dari FormData. String kosong dianggap 0 (atau null). */
 function angka(formData: FormData, key: string): number;
@@ -39,13 +44,18 @@ function teks(formData: FormData, key: string) {
 function bacaFormUnit(formData: FormData) {
   const tipe = String(formData.get("tipe") ?? "") as UnitTipe;
   const model = String(formData.get("model") ?? "").trim();
+  const deal_type = String(formData.get("deal_type") ?? "mudharabah") as DealType;
 
   if (!TIPE_VALID.includes(tipe)) return { error: "Tipe unit tidak valid." };
   if (!model) return { error: "Model wajib diisi." };
+  if (!DEAL_TYPE_VALID.includes(deal_type)) {
+    return { error: "Jenis akad tidak valid." };
+  }
 
   const nilai = {
     tipe,
     model,
+    deal_type,
     kondisi: teks(formData, "kondisi"),
     imei: teks(formData, "imei"),
     kode: teks(formData, "kode"),
@@ -82,7 +92,7 @@ export async function tambahUnit(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") return { error: "Hanya admin yang bisa input unit." };
+  if (!bolehTulis(profile.role)) return { error: "Hanya super admin yang bisa input unit." };
 
   const hasil = bacaFormUnit(formData);
   if ("error" in hasil) return { error: hasil.error };
@@ -112,7 +122,7 @@ export async function ubahUnit(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") return { error: "Hanya admin yang bisa mengubah unit." };
+  if (!bolehTulis(profile.role)) return { error: "Hanya super admin yang bisa mengubah unit." };
 
   const id = String(formData.get("id") ?? "");
   if (!id) return { error: "Unit tidak ditemukan." };
@@ -150,7 +160,7 @@ export async function ubahStatusUnit(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") return { error: "Hanya admin yang bisa mengubah status." };
+  if (!bolehTulis(profile.role)) return { error: "Hanya super admin yang bisa mengubah status." };
 
   const id = String(formData.get("id") ?? "");
   const tujuan = String(formData.get("status") ?? "") as UnitStatus;

@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 import UnitForm from "@/components/unit-form";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { tambahUnit } from "../actions";
 
 export const metadata = { title: "Unit baru" };
 
 export default async function UnitBaruPage() {
-  await requireRole("admin");
+  await requirePenulis();
 
   const supabase = await createClient();
   const { data: daftarPemodal } = await supabase

@@ -175,6 +175,23 @@ export default function UnitForm({
               ))}
             </select>
           </Field>
+
+          <Field
+            label="Jenis akad"
+            htmlFor="deal_type"
+            hint="Mandiri internal tidak terlihat oleh pemodal sama sekali"
+          >
+            <select
+              id="deal_type"
+              name="deal_type"
+              defaultValue={unit?.deal_type ?? "mudharabah"}
+              className={inputClass}
+            >
+              <option value="mudharabah">Mudharabah (modal pemodal)</option>
+              <option value="mandiri_internal">Mandiri internal (dana KOPE)</option>
+              <option value="konsinyasi_fee">Konsinyasi / fee</option>
+            </select>
+          </Field>
         </div>
       </section>
 

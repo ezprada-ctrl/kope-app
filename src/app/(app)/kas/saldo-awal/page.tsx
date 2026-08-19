@@ -2,13 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { SaldoAwalForm } from "@/components/pengeluaran-form";
-import { requireRole } from "@/lib/auth";
+import { requirePenulis } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Saldo awal kas" };
 
 export default async function SaldoAwalPage() {
-  await requireRole("admin");
+  await requirePenulis();
 
   const supabase = await createClient();
   const { count } = await supabase

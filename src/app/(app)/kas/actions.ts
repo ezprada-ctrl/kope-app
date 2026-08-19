@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { CashKategori, ExpenseKategori } from "@/types/database";
 
@@ -21,8 +21,8 @@ export async function catatPengeluaran(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    return { error: "Hanya admin yang bisa mencatat biaya operasional." };
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa mencatat biaya operasional." };
   }
 
   const kategori = String(formData.get("kategori") ?? "") as ExpenseKategori;
@@ -66,8 +66,8 @@ export async function catatSaldoAwal(
   formData: FormData,
 ): Promise<FormState> {
   const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    return { error: "Hanya admin yang bisa mengatur saldo awal." };
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa mengatur saldo awal." };
   }
 
   const jumlah = Number(

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { requireRole } from "@/lib/auth";
+import { requireOrangDalam } from "@/lib/auth";
 import { formatRupiah } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,7 +47,7 @@ function Kartu({
 export default async function FinancialSummaryPage(
   props: PageProps<"/dashboard/financial-summary">,
 ) {
-  await requireRole("admin");
+  await requireOrangDalam();
 
   const params = await props.searchParams;
   const mulai = typeof params.mulai === "string" ? params.mulai : awalBulanIni();

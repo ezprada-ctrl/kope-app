@@ -4,10 +4,21 @@ import { createClient } from "@/lib/supabase/server";
 import type { Profile, UserRole } from "@/types/database";
 
 export const ROLE_LABEL: Record<UserRole, string> = {
-  admin: "Admin / Owner",
+  super_admin: "Super Admin",
+  admin: "Admin (lihat saja)",
   owner_partner: "Owner Partner",
   pemodal: "Pemodal",
 };
+
+/** Role yang boleh menulis. Cerminan `bisa_tulis()` di RLS — bukan gantinya. */
+export function bolehTulis(role: UserRole): boolean {
+  return role === "super_admin";
+}
+
+/** Orang dalam KOPE: boleh melihat semua termasuk unit `mandiri_internal`. */
+export function orangDalam(role: UserRole): boolean {
+  return role === "super_admin" || role === "admin" || role === "owner_partner";
+}
 
 /** Profil user yang sedang login, atau redirect ke /login kalau belum. */
 export async function requireProfile(): Promise<Profile> {
@@ -43,4 +54,21 @@ export async function requireRole(...roles: UserRole[]): Promise<Profile> {
   const profile = await requireProfile();
   if (!roles.includes(profile.role)) redirect("/dashboard?error=akses-ditolak");
   return profile;
+}
+
+/**
+ * Halaman yang menulis data finansial. Hanya super_admin.
+ * Ini cuma UX — penjaga sebenarnya `bisa_tulis()` di policy RLS, dan tetap
+ * menolak walaupun seseorang menembus pengecekan di sini.
+ */
+export async function requirePenulis(): Promise<Profile> {
+  return requireRole("super_admin");
+}
+
+/**
+ * Halaman internal KOPE yang boleh dilihat (bukan diubah) oleh semua orang
+ * dalam, termasuk unit `mandiri_internal`. Pemodal tidak termasuk.
+ */
+export async function requireOrangDalam(): Promise<Profile> {
+  return requireRole("super_admin", "admin", "owner_partner");
 }
