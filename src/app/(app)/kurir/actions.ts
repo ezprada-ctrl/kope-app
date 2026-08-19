@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { CourierTxStatus, CourierTxTipe } from "@/types/database";
 
@@ -21,7 +21,7 @@ function angka(formData: FormData, key: string) {
 
 async function pastikanAdmin() {
   const profile = await requireProfile();
-  return profile.role === "admin";
+  return bolehTulis(profile.role);
 }
 
 // ---------------------------------------------------------------- kurir

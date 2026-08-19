@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import { KAS_KATEGORI_LABEL, tautanSumber } from "@/lib/kas";
 import { createClient } from "@/lib/supabase/server";
@@ -21,7 +21,7 @@ export default async function KasPage() {
   ]);
 
   const adaSaldoAwal = (kas ?? []).some((k) => k.kategori === "saldo_awal");
-  const isAdmin = profile.role === "admin";
+  const isAdmin = bolehTulis(profile.role);
 
   return (
     <div className="space-y-6">

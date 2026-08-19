@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import PorsiForm from "@/components/porsi-form";
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { formatPersen, formatRupiah, formatTanggal } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 
@@ -100,7 +100,7 @@ export default async function BagiHasilPage() {
       </section>
 
       {/* Ubah porsi — admin only */}
-      {profile.role === "admin" && aktif && (
+      {bolehTulis(profile.role) && aktif && (
         <section className="space-y-4 rounded-xl border border-neutral-900 bg-neutral-900/40 p-4">
           <h2 className="text-sm font-medium text-neutral-200">
             Ubah porsi pemodal

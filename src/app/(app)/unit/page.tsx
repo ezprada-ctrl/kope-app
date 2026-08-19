@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import StatusBadge from "@/components/status-badge";
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import { ALUR_UTAMA, UNIT_STATUS_LABEL } from "@/lib/unit-status";
@@ -44,7 +44,7 @@ export default async function UnitListPage(props: PageProps<"/unit">) {
           </p>
         </div>
 
-        {profile.role === "admin" && (
+        {bolehTulis(profile.role) && (
           <Link
             href="/unit/baru"
             className="rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-medium text-neutral-950 transition hover:bg-emerald-400"

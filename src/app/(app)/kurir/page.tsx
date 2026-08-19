@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import {
   COURIER_STATUS_LABEL,
@@ -14,7 +14,7 @@ export const metadata = { title: "Kurir" };
 export default async function KurirPage() {
   const profile = await requireProfile();
   const supabase = await createClient();
-  const isAdmin = profile.role === "admin";
+  const isAdmin = bolehTulis(profile.role);
 
   const [{ data: kurirs }, { data: transaksi, error }] = await Promise.all([
     supabase.from("courier_master").select("*").order("aktif", { ascending: false }).order("nama"),

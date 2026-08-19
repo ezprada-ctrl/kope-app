@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import StatusBadge from "@/components/status-badge";
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { formatPersen, formatRupiah, formatTanggal } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -79,7 +79,7 @@ export default async function UnitDetailPage(props: PageProps<"/unit/[id]">) {
 
   const lanjutan = transisiBerikutnya(unit.status);
   const indexAlur = ALUR_UTAMA.indexOf(unit.status);
-  const isAdmin = profile.role === "admin";
+  const isAdmin = bolehTulis(profile.role);
 
   return (
     <div className="space-y-6">

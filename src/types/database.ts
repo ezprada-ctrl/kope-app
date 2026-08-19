@@ -59,6 +59,7 @@ export type CashKategori =
   | "profit_payout_out"
   | "return_of_capital_out"
   | "cancellation_deposit_in"
+  | "cancellation_refund_out"
   | "refund_out";
 
 export type ExpenseKategori =
@@ -167,12 +168,42 @@ export type CancellationDeposit = {
   dibayar_oleh: CancellationPayer;
   nama_pembayar: string | null;
   jumlah: number;
+  /** SUM rincian kerugian. Dipaksa trigger — jangan pernah dikirim dari client. */
+  kerugian_riil_total: number;
+  /** generated: least(kerugian_riil_total, jumlah) */
+  jumlah_ditahan: number;
+  /** generated: jumlah - jumlah_ditahan */
+  jumlah_dikembalikan: number;
   status: CancellationStatus;
   tanggal: string;
   tanggal_resolve: string | null;
   bukti_url: string | null;
   catatan: string | null;
   koreksi_dari_id: string | null;
+  dicatat_oleh: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** Whitelist komponen kerugian riil — konfigurasi, bukan hardcode. */
+export type LossComponent = {
+  id: string;
+  kode: string;
+  nama: string;
+  aktif: boolean;
+  urutan: number;
+  catatan: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** Rincian kerugian riil per deposit, item per item supaya bisa diaudit. */
+export type CancellationLossItem = {
+  id: string;
+  cancellation_deposit_id: string;
+  component_id: string;
+  jumlah: number;
+  catatan: string | null;
   dicatat_oleh: string | null;
   created_at: string;
   updated_at: string;
@@ -399,6 +430,9 @@ type Generated =
   | "admin_percentage"
   | "urutan"
   | "delta"
+  | "kerugian_riil_total"
+  | "jumlah_ditahan"
+  | "jumlah_dikembalikan"
   | "deal_type"
   // punya DEFAULT di DB
   | "status"
@@ -444,6 +478,8 @@ export type Database = {
       courier_master: Table<CourierMaster>;
       courier_transactions: Table<CourierTransaction>;
       cancellation_deposits: Table<CancellationDeposit>;
+      loss_components: Table<LossComponent>;
+      cancellation_loss_items: Table<CancellationLossItem>;
       refunds: Table<Refund>;
       profit_share_settings: Table<ProfitShareSetting>;
       profit_split: Table<ProfitSplit>;

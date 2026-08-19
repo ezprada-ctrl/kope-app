@@ -10,6 +10,7 @@ export const KAS_KATEGORI_LABEL: Record<CashKategori, string> = {
   profit_payout_out: "Pencairan bagi hasil",
   return_of_capital_out: "Pengembalian modal",
   cancellation_deposit_in: "Deposit pembatalan",
+  cancellation_refund_out: "Pengembalian sisa deposit",
   refund_out: "Refund ke pembeli",
 };
 

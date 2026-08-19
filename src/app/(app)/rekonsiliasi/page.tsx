@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 
@@ -9,7 +9,7 @@ export const metadata = { title: "Rekonsiliasi bank" };
 export default async function RekonsiliasiPage() {
   const profile = await requireProfile();
   const supabase = await createClient();
-  const isAdmin = profile.role === "admin";
+  const isAdmin = bolehTulis(profile.role);
 
   const { data: entries, error } = await supabase
     .from("v_bank_reconciliation")

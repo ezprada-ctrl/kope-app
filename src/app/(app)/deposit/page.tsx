@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ResolveForm } from "@/components/deposit-forms";
-import { requireProfile } from "@/lib/auth";
+import { bolehTulis, requireProfile } from "@/lib/auth";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import {
   DEPOSIT_STATUS_LABEL,
@@ -15,7 +15,7 @@ export const metadata = { title: "Deposit pembatalan" };
 export default async function DepositPage() {
   const profile = await requireProfile();
   const supabase = await createClient();
-  const isAdmin = profile.role === "admin";
+  const isAdmin = bolehTulis(profile.role);
 
   const { data: deposits, error } = await supabase
     .from("v_cancellation_deposits")
@@ -24,9 +24,14 @@ export default async function DepositPage() {
     .limit(100);
 
   const pending = (deposits ?? []).filter((d) => d.status === "pending");
+  // Yang jadi revenue cuma bagian yang benar-benar hangus (sebesar kerugian
+  // riil), bukan seluruh deposit — sisanya wajib dikembalikan ke customer.
   const totalHangus = (deposits ?? [])
     .filter((d) => d.status === "forfeited_as_revenue")
-    .reduce((s, d) => s + Number(d.jumlah), 0);
+    .reduce((s, d) => s + Number(d.jumlah_ditahan), 0);
+  const totalDikembalikan = (deposits ?? [])
+    .filter((d) => d.status === "forfeited_as_revenue")
+    .reduce((s, d) => s + Number(d.jumlah_dikembalikan), 0);
 
   return (
     <div className="space-y-6">
@@ -119,6 +124,12 @@ export default async function DepositPage() {
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums">
                       {formatRupiah(d.jumlah)}
+                      {d.kerugian_riil_total > 0 && (
+                        <p className="mt-0.5 text-xs text-neutral-500">
+                          hangus {formatRupiah(d.jumlah_ditahan)} · kembali{" "}
+                          {formatRupiah(d.jumlah_dikembalikan)}
+                        </p>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -153,9 +164,21 @@ export default async function DepositPage() {
         <strong className="text-neutral-300">Deal jadi</strong> — deposit
         diperhitungkan sebagai cicilan harga, jadi saat unit ditandai
         &ldquo;Terkirim &amp; dibayar&rdquo; kas masuk hanya sebesar sisanya.{" "}
-        <strong className="text-neutral-300">Batal, hangus</strong> — deposit jadi
-        revenue bisnis; fee kurir yang tetap harus dibayar dicatat terpisah di
-        halaman kurir.
+        <strong className="text-neutral-300">Batal, hangus</strong> — yang hangus
+        hanya sebesar kerugian riil (bensin + upah kurir); sisanya wajib
+        dikembalikan ke customer dan otomatis tercatat sebagai kas keluar.
+        Rincian kerugian wajib diisi dulu, kalau tidak deposit tidak bisa
+        dinyatakan hangus.
+        {totalDikembalikan > 0 && (
+          <>
+            {" "}
+            Sudah dikembalikan:{" "}
+            <strong className="text-neutral-300">
+              {formatRupiah(totalDikembalikan)}
+            </strong>
+            .
+          </>
+        )}
       </p>
     </div>
   );

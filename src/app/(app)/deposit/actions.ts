@@ -11,6 +11,56 @@ export type FormState = { error?: string } | null;
 
 const PAYER_VALID: CancellationPayer[] = ["buyer", "seller"];
 
+/**
+ * Catat satu komponen kerugian riil untuk sebuah deposit.
+ *
+ * Sengaja TIDAK menyentuh `kerugian_riil_total` — kolom itu dihitung trigger
+ * dari rincian ini, dan database menolak kalau diisi manual. Rincian juga
+ * tidak melahirkan entri kas: bensin & upah kurir sudah keluar lewat
+ * transaksi kurir, jadi mencatatnya lagi di sini akan double-count.
+ */
+export async function tambahRincianKerugian(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const profile = await requireProfile();
+  if (!bolehTulis(profile.role)) {
+    return { error: "Hanya super admin yang bisa mencatat kerugian riil." };
+  }
+
+  const depositId = String(formData.get("deposit_id") ?? "").trim();
+  const componentId = String(formData.get("component_id") ?? "").trim();
+  const jumlah = Number(
+    String(formData.get("jumlah") ?? "").replace(/[^\d.-]/g, ""),
+  );
+
+  if (!depositId) return { error: "Deposit tidak ditemukan." };
+  if (!componentId) return { error: "Komponen kerugian wajib dipilih." };
+  if (!Number.isFinite(jumlah) || jumlah <= 0) {
+    return { error: "Jumlah kerugian harus lebih dari nol." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("cancellation_loss_items").insert({
+    cancellation_deposit_id: depositId,
+    component_id: componentId,
+    jumlah,
+    catatan: String(formData.get("catatan") ?? "").trim() || null,
+  });
+
+  if (error) {
+    return {
+      error:
+        error.code === "23505"
+          ? "Komponen ini sudah dicatat untuk deposit tersebut. Ubah nilainya, jangan tambah baris baru."
+          : error.message.replace(/^.*?:\s*/, ""),
+    };
+  }
+
+  revalidatePath("/deposit");
+  return null;
+}
+
 export async function catatDeposit(
   _prev: FormState,
   formData: FormData,
