@@ -16,12 +16,12 @@ export default async function UnitEditPage(
 
   const supabase = await createClient();
 
-  const [{ data: unit }, { data: investors }] = await Promise.all([
+  const [{ data: unit }, { data: daftarPemodal }] = await Promise.all([
     supabase.from("units").select("*").eq("id", id).maybeSingle(),
     supabase
       .from("profiles")
       .select("id, nama")
-      .eq("role", "investor")
+      .eq("role", "pemodal")
       .eq("aktif", true)
       .order("nama"),
   ]);
@@ -47,7 +47,7 @@ export default async function UnitEditPage(
       <UnitForm
         action={ubahUnit}
         unit={unit}
-        investors={investors ?? []}
+        daftarPemodal={daftarPemodal ?? []}
         labelTombol="Simpan perubahan"
       />
     </div>

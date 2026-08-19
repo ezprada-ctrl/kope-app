@@ -17,7 +17,7 @@ export default async function BagiHasilPage() {
       .select("*")
       .order("effective_date", { ascending: false })
       .limit(20),
-    // RLS: investor hanya melihat baris untuk unit yang dia danai.
+    // RLS: pemodal hanya melihat baris untuk unit yang dia danai.
     supabase
       .from("v_profit_ringkasan")
       .select("*")
@@ -30,7 +30,7 @@ export default async function BagiHasilPage() {
 
   // Total keuntungan sesuai role yang sedang login.
   const totalSaya = riwayat.reduce((sum, r) => {
-    if (profile.role === "investor") return sum + Number(r.investor_profit ?? 0);
+    if (profile.role === "pemodal") return sum + Number(r.pemodal_profit ?? 0);
     if (profile.role === "owner_partner")
       return sum + Number(r.partner_final_profit ?? 0);
     return sum + Number(r.admin_final_profit ?? 0);
@@ -42,8 +42,8 @@ export default async function BagiHasilPage() {
   );
 
   const labelSaya =
-    profile.role === "investor"
-      ? "Keuntungan investor"
+    profile.role === "pemodal"
+      ? "Keuntungan pemodal"
       : profile.role === "owner_partner"
         ? "Keuntungan partner"
         : "Keuntungan admin";
@@ -68,10 +68,10 @@ export default async function BagiHasilPage() {
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
               <p className="text-xs uppercase tracking-wide text-neutral-500">
-                Investor
+                Pemodal
               </p>
               <p className="mt-0.5 text-xl font-semibold tabular-nums">
-                {formatPersen(aktif.investor_percentage)}
+                {formatPersen(aktif.pemodal_percentage)}
               </p>
               <p className="mt-0.5 text-xs text-neutral-500">dari margin bruto</p>
             </div>
@@ -103,9 +103,9 @@ export default async function BagiHasilPage() {
       {profile.role === "admin" && aktif && (
         <section className="space-y-4 rounded-xl border border-neutral-900 bg-neutral-900/40 p-4">
           <h2 className="text-sm font-medium text-neutral-200">
-            Ubah porsi investor
+            Ubah porsi pemodal
           </h2>
-          <PorsiForm sekarang={Number(aktif.investor_percentage)} />
+          <PorsiForm sekarang={Number(aktif.pemodal_percentage)} />
         </section>
       )}
 
@@ -159,7 +159,7 @@ export default async function BagiHasilPage() {
                   <th className="px-4 py-3 font-medium">Unit</th>
                   <th className="px-4 py-3 font-medium">Settled</th>
                   <th className="px-4 py-3 text-right font-medium">Margin</th>
-                  <th className="px-4 py-3 text-right font-medium">Investor</th>
+                  <th className="px-4 py-3 text-right font-medium">Pemodal</th>
                   <th className="px-4 py-3 text-right font-medium">Admin</th>
                   <th className="px-4 py-3 text-right font-medium">Partner</th>
                 </tr>
@@ -175,7 +175,7 @@ export default async function BagiHasilPage() {
                         {r.model}
                       </Link>
                       <p className="mt-0.5 text-xs text-neutral-500">
-                        porsi investor {formatPersen(r.investor_percentage)}
+                        porsi pemodal {formatPersen(r.pemodal_percentage)}
                       </p>
                     </td>
                     <td className="px-4 py-3 text-neutral-400">
@@ -187,7 +187,7 @@ export default async function BagiHasilPage() {
                       {formatRupiah(r.margin_bruto)}
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums">
-                      {formatRupiah(r.investor_profit)}
+                      {formatRupiah(r.pemodal_profit)}
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums">
                       {formatRupiah(r.admin_final_profit)}
@@ -216,7 +216,7 @@ export default async function BagiHasilPage() {
                 className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3 text-sm"
               >
                 <span>
-                  Investor {formatPersen(s.investor_percentage)}
+                  Pemodal {formatPersen(s.pemodal_percentage)}
                   {i === 0 && (
                     <span className="ml-2 rounded-full border border-emerald-900 bg-emerald-950/60 px-2 py-0.5 text-xs text-emerald-300">
                       aktif

@@ -27,6 +27,6 @@ export function tautanSumber(
 ): string | null {
   if (!refTable || !refId) return null;
   if (refTable === "units") return `/unit/${refId}`;
-  if (refTable === "investor_ledger") return "/modal";
+  if (refTable === "pemodal_ledger") return "/modal";
   return null;
 }

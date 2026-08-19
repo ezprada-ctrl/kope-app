@@ -10,7 +10,7 @@
  * finansial di client lalu menimpanya ke DB.
  */
 
-export type UserRole = "admin" | "owner_partner" | "investor";
+export type UserRole = "admin" | "owner_partner" | "pemodal";
 
 export type UnitTipe = "baru" | "bekas";
 
@@ -82,7 +82,7 @@ export type Unit = {
   model: string;
   kondisi: string | null;
   imei: string | null;
-  investor_id: string | null;
+  pemodal_id: string | null;
   harga_beli: number;
   biaya_kurir_ambil: number;
   biaya_refurbish: number;
@@ -103,9 +103,9 @@ export type Unit = {
   updated_at: string;
 };
 
-export type InvestorLedger = {
+export type PemodalLedger = {
   id: string;
-  investor_id: string;
+  pemodal_id: string;
   tipe: LedgerTipe;
   jumlah: number;
   unit_id: string | null;
@@ -186,8 +186,8 @@ export type Refund = {
 
 export type ProfitShareSetting = {
   id: string;
-  investor_percentage: number;
-  /** generated: 100 - investor_percentage */
+  pemodal_percentage: number;
+  /** generated: 100 - pemodal_percentage */
   admin_percentage: number;
   owner_admin_percentage: number;
   owner_partner_percentage: number;
@@ -203,8 +203,8 @@ export type ProfitSplit = {
   tanggal_settle: string;
   margin_bruto: number;
   profit_share_setting_id: string;
-  investor_id: string | null;
-  investor_profit: number;
+  pemodal_id: string | null;
+  pemodal_profit: number;
   admin_pool_profit: number;
   admin_final_profit: number;
   partner_final_profit: number;
@@ -229,7 +229,7 @@ export type LossAllocation = {
 export type LossAllocationItem = {
   id: string;
   loss_allocation_id: string;
-  investor_id: string;
+  pemodal_id: string;
   kontribusi: number;
   proporsi: number;
   jumlah_rugi_ditanggung: number;
@@ -257,7 +257,7 @@ export type BankReconciliation = {
 
 export type PlafonSetting = {
   id: string;
-  investor_id: string | null;
+  pemodal_id: string | null;
   plafon: number;
   effective_date: string;
   catatan: string | null;
@@ -278,8 +278,8 @@ export type AuditLog = {
   timestamp: string;
 };
 
-export type InvestorOutstanding = {
-  investor_id: string;
+export type PemodalOutstanding = {
+  pemodal_id: string;
   nama: string;
   total_capital_call: number;
   total_return_of_capital: number;
@@ -321,7 +321,7 @@ export type OperationalExpense = {
 
 export type FinancialSummary = {
   saldo_kas_bisnis_saat_ini: number;
-  total_outstanding_investor: number;
+  total_outstanding_pemodal: number;
   total_ekuitas_admin_partner_belum_ditarik: number;
   ekuitas_admin_belum_ditarik: number;
   ekuitas_partner_belum_ditarik: number;
@@ -353,18 +353,18 @@ export type ProfitRingkasan = {
   kode: string | null;
   tanggal_settle: string;
   margin_bruto: number;
-  investor_id: string | null;
-  investor_profit: number;
+  pemodal_id: string | null;
+  pemodal_profit: number;
   admin_pool_profit: number;
   admin_final_profit: number;
   partner_final_profit: number;
-  investor_percentage: number;
+  pemodal_percentage: number;
   owner_admin_percentage: number;
   owner_partner_percentage: number;
 };
 
 export type PlafonAktif = {
-  investor_id: string;
+  pemodal_id: string;
   nama: string;
   plafon_aktif: number | null;
   effective_date: string | null;
@@ -428,7 +428,7 @@ export type Database = {
       profiles: Table<Profile>;
       plafon_settings: Table<PlafonSetting>;
       units: Table<Unit>;
-      investor_ledger: Table<InvestorLedger>;
+      pemodal_ledger: Table<PemodalLedger>;
       courier_master: Table<CourierMaster>;
       courier_transactions: Table<CourierTransaction>;
       cancellation_deposits: Table<CancellationDeposit>;
@@ -444,7 +444,7 @@ export type Database = {
       notifications: Table<Notification>;
     };
     Views: {
-      v_investor_outstanding: View<InvestorOutstanding>;
+      v_pemodal_outstanding: View<PemodalOutstanding>;
       v_plafon_aktif: View<PlafonAktif>;
       v_profit_ringkasan: View<ProfitRingkasan>;
       v_financial_summary: View<FinancialSummary>;
@@ -470,8 +470,8 @@ export type Database = {
           flagged_vs_kas_app: boolean;
         }
       >;
-      v_investor_ledger_running: View<
-        InvestorLedger & {
+      v_pemodal_ledger_running: View<
+        PemodalLedger & {
           delta_outstanding: number;
           outstanding_running_balance: number;
         }
@@ -482,12 +482,12 @@ export type Database = {
         Args: { p_unit_id: string };
         Returns: Unit;
       };
-      plafon_investor: {
-        Args: { p_investor_id: string };
+      plafon_pemodal: {
+        Args: { p_pemodal_id: string };
         Returns: number;
       };
-      outstanding_investor: {
-        Args: { p_investor_id: string };
+      outstanding_pemodal: {
+        Args: { p_pemodal_id: string };
         Returns: number;
       };
       modal_tertahan_unit: {

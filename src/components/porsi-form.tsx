@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { ubahPorsiInvestor, type FormState } from "@/app/(app)/bagi-hasil/actions";
+import { ubahPorsiPemodal, type FormState } from "@/app/(app)/bagi-hasil/actions";
 import { formatRupiah } from "@/lib/format";
 
 const inputClass =
@@ -27,13 +27,13 @@ const CONTOH_MARGIN = 10_000_000;
 
 export default function PorsiForm({ sekarang }: { sekarang: number }) {
   const [state, formAction] = useActionState<FormState, FormData>(
-    ubahPorsiInvestor,
+    ubahPorsiPemodal,
     null,
   );
   const [persen, setPersen] = useState(sekarang);
 
-  const investor = Math.round((CONTOH_MARGIN * persen) / 100);
-  const pool = CONTOH_MARGIN - investor;
+  const pemodal = Math.round((CONTOH_MARGIN * persen) / 100);
+  const pool = CONTOH_MARGIN - pemodal;
   const admin = Math.round((pool * 20) / 100);
   const partner = pool - admin;
 
@@ -42,14 +42,14 @@ export default function PorsiForm({ sekarang }: { sekarang: number }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label
-            htmlFor="investor_percentage"
+            htmlFor="pemodal_percentage"
             className="mb-1.5 block text-sm text-neutral-300"
           >
-            Porsi investor (%)
+            Porsi pemodal (%)
           </label>
           <input
-            id="investor_percentage"
-            name="investor_percentage"
+            id="pemodal_percentage"
+            name="pemodal_percentage"
             type="number"
             min={0}
             max={100}
@@ -80,8 +80,8 @@ export default function PorsiForm({ sekarang }: { sekarang: number }) {
         </p>
         <dl className="grid gap-2 sm:grid-cols-3">
           <div>
-            <dt className="text-neutral-400">Investor ({persen}%)</dt>
-            <dd className="tabular-nums">{formatRupiah(investor)}</dd>
+            <dt className="text-neutral-400">Pemodal ({persen}%)</dt>
+            <dd className="tabular-nums">{formatRupiah(pemodal)}</dd>
           </div>
           <div>
             <dt className="text-neutral-400">Admin (20% dari sisa)</dt>

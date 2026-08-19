@@ -6,7 +6,7 @@ import type { Profile, UserRole } from "@/types/database";
 export const ROLE_LABEL: Record<UserRole, string> = {
   admin: "Admin / Owner",
   owner_partner: "Owner Partner",
-  investor: "Investor",
+  pemodal: "Pemodal",
 };
 
 /** Profil user yang sedang login, atau redirect ke /login kalau belum. */

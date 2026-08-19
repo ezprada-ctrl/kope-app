@@ -49,7 +49,7 @@ function bacaFormUnit(formData: FormData) {
     kondisi: teks(formData, "kondisi"),
     imei: teks(formData, "imei"),
     kode: teks(formData, "kode"),
-    investor_id: teks(formData, "investor_id"),
+    pemodal_id: teks(formData, "pemodal_id"),
     harga_beli: angka(formData, "harga_beli"),
     biaya_kurir_ambil: angka(formData, "biaya_kurir_ambil"),
     biaya_refurbish: angka(formData, "biaya_refurbish"),

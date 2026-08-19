@@ -5,7 +5,7 @@ import { formatRupiah, formatTanggal } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { LedgerTipe } from "@/types/database";
 
-export const metadata = { title: "Modal investor" };
+export const metadata = { title: "Modal pemodal" };
 
 const TIPE_LABEL: Record<LedgerTipe, string> = {
   capital_call: "Capital call",
@@ -41,32 +41,32 @@ export default async function ModalPage() {
   const profile = await requireProfile();
   const supabase = await createClient();
 
-  // RLS: investor cuma dapat barisnya sendiri di kedua query ini.
+  // RLS: pemodal cuma dapat barisnya sendiri di kedua query ini.
   const [{ data: ringkasan }, { data: ledger, error }] = await Promise.all([
-    supabase.from("v_investor_outstanding").select("*").order("nama"),
+    supabase.from("v_pemodal_outstanding").select("*").order("nama"),
     supabase
-      .from("investor_ledger")
+      .from("pemodal_ledger")
       .select("*")
       .order("tanggal", { ascending: false })
       .limit(100),
   ]);
 
-  // Nama investor & model unit untuk label baris ledger.
+  // Nama pemodal & model unit untuk label baris ledger.
   const [{ data: profiles }, { data: units }] = await Promise.all([
     supabase.from("profiles").select("id, nama"),
     supabase.from("units").select("id, model"),
   ]);
 
-  const namaInvestor = new Map((profiles ?? []).map((p) => [p.id, p.nama]));
+  const namaPemodal = new Map((profiles ?? []).map((p) => [p.id, p.nama]));
   const modelUnit = new Map((units ?? []).map((u) => [u.id, u.model]));
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Modal investor</h1>
+          <h1 className="text-xl font-semibold">Modal pemodal</h1>
           <p className="mt-1 text-sm text-neutral-400">
-            {profile.role === "investor"
+            {profile.role === "pemodal"
               ? "Posisi modal dan riwayat transaksimu."
               : "Outstanding, plafon, dan riwayat pergerakan modal."}
           </p>
@@ -82,12 +82,12 @@ export default async function ModalPage() {
         )}
       </div>
 
-      {/* Ringkasan per investor */}
+      {/* Ringkasan per pemodal */}
       {ringkasan && ringkasan.length > 0 ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {ringkasan.map((r) => (
             <div
-              key={r.investor_id}
+              key={r.pemodal_id}
               className="rounded-xl border border-neutral-900 bg-neutral-900/40 p-4"
             >
               <p className="font-medium">{r.nama}</p>
@@ -123,8 +123,8 @@ export default async function ModalPage() {
         </div>
       ) : (
         <p className="rounded-xl border border-neutral-900 bg-neutral-900/40 px-4 py-6 text-center text-sm text-neutral-400">
-          Belum ada investor terdaftar. Tambahkan user dengan role{" "}
-          <code className="text-neutral-300">investor</code> lebih dulu.
+          Belum ada pemodal terdaftar. Tambahkan user dengan role{" "}
+          <code className="text-neutral-300">pemodal</code> lebih dulu.
         </p>
       )}
 
@@ -152,7 +152,7 @@ export default async function ModalPage() {
               <thead className="bg-neutral-900/60 text-left text-xs uppercase tracking-wide text-neutral-500">
                 <tr>
                   <th className="px-4 py-3 font-medium">Tanggal</th>
-                  <th className="px-4 py-3 font-medium">Investor</th>
+                  <th className="px-4 py-3 font-medium">Pemodal</th>
                   <th className="px-4 py-3 font-medium">Jenis</th>
                   <th className="px-4 py-3 font-medium">Unit</th>
                   <th className="px-4 py-3 text-right font-medium">Jumlah</th>
@@ -165,7 +165,7 @@ export default async function ModalPage() {
                       {formatTanggal(l.tanggal)}
                     </td>
                     <td className="px-4 py-3">
-                      {namaInvestor.get(l.investor_id) ?? "—"}
+                      {namaPemodal.get(l.pemodal_id) ?? "—"}
                     </td>
                     <td className="px-4 py-3">
                       <span

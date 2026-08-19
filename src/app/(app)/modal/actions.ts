@@ -21,13 +21,13 @@ export async function catatLedger(
     return { error: "Hanya admin yang bisa mencatat pergerakan modal." };
   }
 
-  const investor_id = String(formData.get("investor_id") ?? "");
+  const pemodal_id = String(formData.get("pemodal_id") ?? "");
   const tipe = String(formData.get("tipe") ?? "") as LedgerTipe;
   const jumlahRaw = String(formData.get("jumlah") ?? "").replace(/[^\d.-]/g, "");
   const unitRaw = String(formData.get("unit_id") ?? "").trim();
   const tanggal = String(formData.get("tanggal") ?? "").trim();
 
-  if (!investor_id) return { error: "Investor wajib dipilih." };
+  if (!pemodal_id) return { error: "Pemodal wajib dipilih." };
   if (!TIPE_MANUAL.includes(tipe)) return { error: "Tipe transaksi tidak valid." };
 
   const jumlah = Number(jumlahRaw);
@@ -37,8 +37,8 @@ export async function catatLedger(
 
   const supabase = await createClient();
 
-  const { error } = await supabase.from("investor_ledger").insert({
-    investor_id,
+  const { error } = await supabase.from("pemodal_ledger").insert({
+    pemodal_id,
     tipe,
     jumlah,
     unit_id: unitRaw === "" ? null : unitRaw,

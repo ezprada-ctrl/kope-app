@@ -9,7 +9,7 @@ import { formatRupiah } from "@/lib/format";
 
 type Opsi = { id: string; label: string };
 
-type InvestorInfo = {
+type PemodalInfo = {
   id: string;
   nama: string;
   outstanding: number;
@@ -34,10 +34,10 @@ function Tombol() {
 }
 
 export default function LedgerForm({
-  investors,
+  daftarPemodal,
   units,
 }: {
-  investors: InvestorInfo[];
+  daftarPemodal: PemodalInfo[];
   units: Opsi[];
 }) {
   const [state, formAction] = useActionState<FormState, FormData>(
@@ -45,14 +45,14 @@ export default function LedgerForm({
     null,
   );
 
-  const [investorId, setInvestorId] = useState(investors[0]?.id ?? "");
+  const [pemodalId, setPemodalId] = useState(daftarPemodal[0]?.id ?? "");
   const [tipe, setTipe] = useState<"capital_call" | "return_of_capital">(
     "capital_call",
   );
   const [jumlah, setJumlah] = useState(0);
 
-  const investor = investors.find((i) => i.id === investorId);
-  const sisa = investor?.sisa ?? null;
+  const pemodal = daftarPemodal.find((i) => i.id === pemodalId);
+  const sisa = pemodal?.sisa ?? null;
   const lewatPlafon =
     tipe === "capital_call" && sisa !== null && jumlah > sisa;
 
@@ -60,19 +60,19 @@ export default function LedgerForm({
     <form action={formAction} className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="investor_id" className="mb-1.5 block text-sm text-neutral-300">
-            Investor
+          <label htmlFor="pemodal_id" className="mb-1.5 block text-sm text-neutral-300">
+            Pemodal
           </label>
           <select
-            id="investor_id"
-            name="investor_id"
+            id="pemodal_id"
+            name="pemodal_id"
             required
-            value={investorId}
-            onChange={(e) => setInvestorId(e.target.value)}
+            value={pemodalId}
+            onChange={(e) => setPemodalId(e.target.value)}
             className={inputClass}
           >
-            {investors.length === 0 && <option value="">Belum ada investor</option>}
-            {investors.map((i) => (
+            {daftarPemodal.length === 0 && <option value="">Belum ada pemodal</option>}
+            {daftarPemodal.map((i) => (
               <option key={i.id} value={i.id}>
                 {i.nama}
               </option>
@@ -172,19 +172,19 @@ export default function LedgerForm({
         </div>
       </div>
 
-      {investor && (
+      {pemodal && (
         <div className="rounded-xl border border-neutral-900 bg-neutral-900/40 p-4 text-sm">
           <p className="mb-2 text-xs uppercase tracking-wide text-neutral-500">
-            Posisi {investor.nama}
+            Posisi {pemodal.nama}
           </p>
           <dl className="grid gap-2 sm:grid-cols-3">
             <div>
               <dt className="text-neutral-400">Outstanding</dt>
-              <dd className="tabular-nums">{formatRupiah(investor.outstanding)}</dd>
+              <dd className="tabular-nums">{formatRupiah(pemodal.outstanding)}</dd>
             </div>
             <div>
               <dt className="text-neutral-400">Plafon</dt>
-              <dd className="tabular-nums">{formatRupiah(investor.plafon)}</dd>
+              <dd className="tabular-nums">{formatRupiah(pemodal.plafon)}</dd>
             </div>
             <div>
               <dt className="text-neutral-400">Sisa plafon</dt>

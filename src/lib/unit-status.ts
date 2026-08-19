@@ -19,7 +19,7 @@ export const UNIT_STATUS_KETERANGAN: Record<UnitStatus, string> = {
   in_stock: "QC lolos, unit ada di tangan dan siap dijual.",
   sold_pending_delivery: "Buyer sudah deal, deposit dibayar di depan.",
   delivered_paid: "COD sukses, uang masuk dompet Jago.",
-  settled: "Profit split dieksekusi, modal investor dikembalikan.",
+  settled: "Profit split dieksekusi, modal pemodal dikembalikan.",
   refunded: "Transaksi di-refund penuh.",
   partial_refund: "Sebagian dana dikembalikan ke buyer.",
   cancelled_forfeited: "Buyer batal, kurir tetap dibayar dari deposit.",

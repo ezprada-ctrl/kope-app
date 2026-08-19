@@ -11,10 +11,10 @@ export default async function UnitBaruPage() {
   await requireRole("admin");
 
   const supabase = await createClient();
-  const { data: investors } = await supabase
+  const { data: daftarPemodal } = await supabase
     .from("profiles")
     .select("id, nama")
-    .eq("role", "investor")
+    .eq("role", "pemodal")
     .eq("aktif", true)
     .order("nama");
 
@@ -35,7 +35,7 @@ export default async function UnitBaruPage() {
 
       <UnitForm
         action={tambahUnit}
-        investors={investors ?? []}
+        daftarPemodal={daftarPemodal ?? []}
         labelTombol="Simpan unit"
       />
     </div>

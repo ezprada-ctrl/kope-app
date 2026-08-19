@@ -22,7 +22,7 @@ export default async function UnitListPage(props: PageProps<"/unit">) {
   const profile = await requireProfile();
   const supabase = await createClient();
 
-  // Tanpa filter investor_id — RLS yang membatasi baris mana yang kelihatan.
+  // Tanpa filter pemodal_id — RLS yang membatasi baris mana yang kelihatan.
   let query = supabase
     .from("units")
     .select("*")
@@ -38,7 +38,7 @@ export default async function UnitListPage(props: PageProps<"/unit">) {
         <div>
           <h1 className="text-xl font-semibold">Unit</h1>
           <p className="mt-1 text-sm text-neutral-400">
-            {profile.role === "investor"
+            {profile.role === "pemodal"
               ? "Unit yang kamu danai."
               : "Seluruh unit beserta HPP dan margin."}
           </p>

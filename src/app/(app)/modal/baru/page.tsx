@@ -12,7 +12,7 @@ export default async function ModalBaruPage() {
   const supabase = await createClient();
 
   const [{ data: ringkasan }, { data: units }] = await Promise.all([
-    supabase.from("v_investor_outstanding").select("*").order("nama"),
+    supabase.from("v_pemodal_outstanding").select("*").order("nama"),
     supabase
       .from("units")
       .select("id, model, kode, status")
@@ -20,8 +20,8 @@ export default async function ModalBaruPage() {
       .order("created_at", { ascending: false }),
   ]);
 
-  const investors = (ringkasan ?? []).map((r) => ({
-    id: r.investor_id,
+  const daftarPemodal = (ringkasan ?? []).map((r) => ({
+    id: r.pemodal_id,
     nama: r.nama,
     outstanding: Number(r.outstanding ?? 0),
     plafon: r.plafon_aktif === null ? null : Number(r.plafon_aktif),
@@ -40,7 +40,7 @@ export default async function ModalBaruPage() {
           href="/modal"
           className="text-sm text-neutral-400 transition hover:text-neutral-200"
         >
-          ← Modal investor
+          ← Modal pemodal
         </Link>
         <h1 className="mt-2 text-xl font-semibold">Catat pergerakan modal</h1>
         <p className="mt-1 text-sm text-neutral-400">
@@ -49,7 +49,7 @@ export default async function ModalBaruPage() {
         </p>
       </div>
 
-      <LedgerForm investors={investors} units={opsiUnit} />
+      <LedgerForm daftarPemodal={daftarPemodal} units={opsiUnit} />
     </div>
   );
 }

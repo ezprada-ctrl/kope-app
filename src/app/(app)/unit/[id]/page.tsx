@@ -51,7 +51,7 @@ export default async function UnitDetailPage(props: PageProps<"/unit/[id]">) {
   const profile = await requireProfile();
   const supabase = await createClient();
 
-  // RLS: investor otomatis dapat 0 baris untuk unit yang bukan dia danai.
+  // RLS: pemodal otomatis dapat 0 baris untuk unit yang bukan dia danai.
   const { data: unit } = await supabase
     .from("units")
     .select("*")
@@ -60,13 +60,13 @@ export default async function UnitDetailPage(props: PageProps<"/unit/[id]">) {
 
   if (!unit) notFound();
 
-  const [{ data: investor }, { data: modalTertahan }, { data: split }] =
+  const [{ data: pemodal }, { data: modalTertahan }, { data: split }] =
     await Promise.all([
-      unit.investor_id
+      unit.pemodal_id
         ? supabase
             .from("profiles")
             .select("nama")
-            .eq("id", unit.investor_id)
+            .eq("id", unit.pemodal_id)
             .maybeSingle()
         : Promise.resolve({ data: null }),
       supabase.rpc("modal_tertahan_unit", { p_unit_id: unit.id }),
@@ -216,8 +216,8 @@ export default async function UnitDetailPage(props: PageProps<"/unit/[id]">) {
           </h2>
           <Baris label="Margin bruto" value={formatRupiah(split.margin_bruto)} />
           <Baris
-            label={`Investor (${formatPersen(split.investor_percentage)})`}
-            value={formatRupiah(split.investor_profit)}
+            label={`Pemodal (${formatPersen(split.pemodal_percentage)})`}
+            value={formatRupiah(split.pemodal_profit)}
           />
           <Baris
             label={`Admin (${formatPersen(split.owner_admin_percentage)} dari sisa)`}
@@ -239,10 +239,10 @@ export default async function UnitDetailPage(props: PageProps<"/unit/[id]">) {
         <h2 className="mb-2 text-sm font-medium text-neutral-200">Informasi</h2>
         <Baris
           label="Sumber dana"
-          value={investor?.nama ?? "Modal sendiri / kas pool"}
+          value={pemodal?.nama ?? "Modal sendiri / kas pool"}
         />
         <Baris
-          label="Modal investor tertahan"
+          label="Modal pemodal tertahan"
           value={formatRupiah(modalTertahan ?? 0)}
         />
         <Baris label="Tanggal beli" value={formatTanggal(unit.tanggal_beli)} />

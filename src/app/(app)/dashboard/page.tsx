@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   const profile = await requireProfile();
   const supabase = await createClient();
 
-  // Semua query di bawah lewat RLS — investor otomatis cuma dapat datanya sendiri.
+  // Semua query di bawah lewat RLS — pemodal otomatis cuma dapat datanya sendiri.
   const [{ count: totalUnit }, { data: setting }, { data: outstanding }] =
     await Promise.all([
       supabase.from("units").select("id", { count: "exact", head: true }),
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
         .order("effective_date", { ascending: false })
         .limit(1)
         .maybeSingle(),
-      supabase.from("v_investor_outstanding").select("*"),
+      supabase.from("v_pemodal_outstanding").select("*"),
     ]);
 
   const totalOutstanding = (outstanding ?? []).reduce(
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
           label="Unit tercatat"
           value={String(totalUnit ?? 0)}
           hint={
-            profile.role === "investor"
+            profile.role === "pemodal"
               ? "Unit yang kamu danai"
               : "Seluruh unit"
           }
@@ -70,8 +70,8 @@ export default async function DashboardPage() {
           hint="capital call − return of capital"
         />
         <Card
-          label="Porsi investor"
-          value={formatPersen(setting?.investor_percentage ?? null)}
+          label="Porsi pemodal"
+          value={formatPersen(setting?.pemodal_percentage ?? null)}
           hint={
             setting
               ? `Sisanya dibagi ${formatPersen(setting.owner_admin_percentage)} admin / ${formatPersen(setting.owner_partner_percentage)} partner`

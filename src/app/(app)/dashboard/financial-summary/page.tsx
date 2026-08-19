@@ -63,12 +63,12 @@ export default async function FinancialSummaryPage(
   const lr = Array.isArray(labaRugi) ? labaRugi[0] : labaRugi;
 
   const saldoKas = Number(ringkasan?.saldo_kas_bisnis_saat_ini ?? 0);
-  const outstanding = Number(ringkasan?.total_outstanding_investor ?? 0);
+  const outstanding = Number(ringkasan?.total_outstanding_pemodal ?? 0);
   const ekuitas = Number(
     ringkasan?.total_ekuitas_admin_partner_belum_ditarik ?? 0,
   );
 
-  // Kas yang belum "punya pemilik": setelah modal investor dan hak
+  // Kas yang belum "punya pemilik": setelah modal pemodal dan hak
   // admin/partner dikeluarkan, sisanya baru benar-benar bebas.
   const kasBebas = saldoKas - outstanding - ekuitas;
 
@@ -95,7 +95,7 @@ export default async function FinancialSummaryPage(
           tone={saldoKas < 0 ? "buruk" : "netral"}
         />
         <Kartu
-          label="Outstanding investor"
+          label="Outstanding pemodal"
           value={formatRupiah(outstanding)}
           hint="Modal yang belum dikembalikan"
         />
@@ -114,7 +114,7 @@ export default async function FinancialSummaryPage(
 
       {kasBebas < 0 && (
         <p className="rounded-lg border border-red-900 bg-red-950/50 px-3 py-2 text-sm text-red-200">
-          Kas bebas negatif: klaim atas kas (modal investor + hak admin/partner)
+          Kas bebas negatif: klaim atas kas (modal pemodal + hak admin/partner)
           melebihi uang yang benar-benar ada. Cek saldo awal dan rekonsiliasi
           bank.
         </p>

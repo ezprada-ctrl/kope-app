@@ -8,7 +8,7 @@ import { formatRupiah } from "@/lib/format";
 import type { FormState } from "@/app/(app)/unit/actions";
 import type { Unit } from "@/types/database";
 
-type InvestorOpsi = { id: string; nama: string };
+type PemodalOpsi = { id: string; nama: string };
 
 const inputClass =
   "w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm outline-none focus:border-emerald-500";
@@ -75,12 +75,12 @@ function Tombol({ label }: { label: string }) {
 export default function UnitForm({
   action,
   unit,
-  investors,
+  daftarPemodal,
   labelTombol,
 }: {
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   unit?: Unit;
-  investors: InvestorOpsi[];
+  daftarPemodal: PemodalOpsi[];
   labelTombol: string;
 }) {
   const [state, formAction] = useActionState<FormState, FormData>(action, null);
@@ -158,17 +158,17 @@ export default function UnitForm({
 
           <Field
             label="Sumber dana"
-            htmlFor="investor_id"
+            htmlFor="pemodal_id"
             hint="Kosongkan kalau pakai modal sendiri / kas pool"
           >
             <select
-              id="investor_id"
-              name="investor_id"
-              defaultValue={unit?.investor_id ?? ""}
+              id="pemodal_id"
+              name="pemodal_id"
+              defaultValue={unit?.pemodal_id ?? ""}
               className={inputClass}
             >
               <option value="">Modal sendiri / kas pool</option>
-              {investors.map((inv) => (
+              {daftarPemodal.map((inv) => (
                 <option key={inv.id} value={inv.id}>
                   {inv.nama}
                 </option>
