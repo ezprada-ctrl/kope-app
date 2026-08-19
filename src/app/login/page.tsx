@@ -24,6 +24,12 @@ export default async function LoginPage(props: PageProps<"/login">) {
           </p>
         )}
 
+        {error === "akun-belum-aktif" && (
+          <p className="mb-4 rounded-lg border border-amber-900 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
+            Akun kamu belum diaktifkan admin. Hubungi admin.
+          </p>
+        )}
+
         {error === "link-tidak-valid" && (
           <p className="mb-4 rounded-lg border border-amber-900 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
             Link undangan/reset password tidak valid atau sudah kedaluwarsa.

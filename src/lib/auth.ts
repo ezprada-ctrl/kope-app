@@ -29,6 +29,12 @@ export async function requireProfile(): Promise<Profile> {
     redirect("/login?error=profil-tidak-ditemukan");
   }
 
+  if (!profile.aktif) {
+    // Profil hasil signup dibuat non-aktif (migrasi 0012). Selama admin
+    // belum mengaktifkan, jangan beri akses ke shell aplikasi sama sekali.
+    redirect("/login?error=akun-belum-aktif");
+  }
+
   return profile;
 }
 

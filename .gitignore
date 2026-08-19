@@ -44,3 +44,6 @@ next-env.d.ts
 # local tooling (machine-specific, not project source)
 /.claude/
 /graphify-out/
+
+.vercel
+.env*
