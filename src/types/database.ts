@@ -18,6 +18,14 @@ export type DealType = "mudharabah" | "mandiri_internal" | "konsinyasi_fee";
 /** Menentukan kapan nisbah di-snapshot ke unit. */
 export type FundingSource = "direct_capital_call" | "pool";
 
+/**
+ * Klasifikasi kerugian. Diisi manual per kejadian — definisi operasional
+ * "kelalaian" belum ditetapkan di akad, jadi sengaja bukan aturan otomatis.
+ */
+export type LossClassification = "normal" | "kelalaian" | "fraud";
+
+export type JenisUsaha = "perorangan" | "cv" | "pt";
+
 export type UnitTipe = "baru" | "bekas";
 
 export type UnitStatus =
@@ -106,9 +114,29 @@ export type Unit = {
   /** generated: harga_jual - hpp_total - biaya_kurir_antar - biaya_admin_packing */
   margin: number | null;
   status: UnitStatus;
+  /** Kerugian riil. Diisi settle_unit() saat margin negatif. */
+  realized_loss: number;
+  loss_classification: LossClassification | null;
+  loss_justifikasi: string | null;
+  /** Penanggung untuk kelalaian/fraud. NULL untuk rugi normal. */
+  loss_bearer_id: string | null;
   tanggal_beli: string | null;
   tanggal_jual: string | null;
   tanggal_settle: string | null;
+  catatan: string | null;
+  dicatat_oleh: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** Badan usaha yang berlaku pada suatu periode. Append-only. */
+export type BusinessEntityConfig = {
+  id: string;
+  jenis_usaha: JenisUsaha;
+  berlaku_dari: string;
+  berlaku_sampai: string | null;
+  npwp: string | null;
+  nama_resmi_usaha: string | null;
   catatan: string | null;
   dicatat_oleh: string | null;
   created_at: string;
@@ -434,6 +462,7 @@ type Generated =
   | "jumlah_ditahan"
   | "jumlah_dikembalikan"
   | "deal_type"
+  | "realized_loss"
   // punya DEFAULT di DB
   | "status"
   | "aktif"
@@ -479,6 +508,7 @@ export type Database = {
       courier_transactions: Table<CourierTransaction>;
       cancellation_deposits: Table<CancellationDeposit>;
       loss_components: Table<LossComponent>;
+      business_entity_config: Table<BusinessEntityConfig>;
       cancellation_loss_items: Table<CancellationLossItem>;
       refunds: Table<Refund>;
       profit_share_settings: Table<ProfitShareSetting>;
@@ -571,6 +601,8 @@ export type Database = {
       user_role: UserRole;
       deal_type: DealType;
       funding_source: FundingSource;
+      loss_classification: LossClassification;
+      jenis_usaha: JenisUsaha;
       unit_tipe: UnitTipe;
       unit_status: UnitStatus;
       ledger_tipe: LedgerTipe;

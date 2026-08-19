@@ -196,6 +196,69 @@ export default function UnitForm({
       </section>
 
       <section className="space-y-4 rounded-xl border border-neutral-900 bg-neutral-900/40 p-4">
+        <div>
+          <h2 className="text-sm font-medium text-neutral-200">
+            Kerugian (isi hanya kalau unit rugi)
+          </h2>
+          <p className="mt-1 text-xs text-neutral-500">
+            Unit dengan margin negatif tidak bisa di-settle sebelum klasifikasi
+            dan justifikasinya terisi. Rugi normal ditanggung sesuai porsi
+            modal; kelalaian dan fraud ditanggung penuh pihak yang ditunjuk.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Klasifikasi kerugian" htmlFor="loss_classification">
+            <select
+              id="loss_classification"
+              name="loss_classification"
+              defaultValue={unit?.loss_classification ?? ""}
+              className={inputClass}
+            >
+              <option value="">— tidak rugi —</option>
+              <option value="normal">Rugi bisnis normal</option>
+              <option value="kelalaian">Kelalaian (ta&rsquo;addi/taqshir)</option>
+              <option value="fraud">Fraud</option>
+            </select>
+          </Field>
+
+          <Field
+            label="Penanggung kerugian"
+            htmlFor="loss_bearer_id"
+            hint="Wajib untuk kelalaian & fraud. Kosongkan untuk rugi normal."
+          >
+            <select
+              id="loss_bearer_id"
+              name="loss_bearer_id"
+              defaultValue={unit?.loss_bearer_id ?? ""}
+              className={inputClass}
+            >
+              <option value="">— tidak ada —</option>
+              {daftarPemodal.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nama}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+
+        <Field
+          label="Justifikasi kerugian"
+          htmlFor="loss_justifikasi"
+          hint="Wajib diisi kalau ada kerugian — jadi bukti saat diaudit"
+        >
+          <textarea
+            id="loss_justifikasi"
+            name="loss_justifikasi"
+            rows={2}
+            defaultValue={unit?.loss_justifikasi ?? ""}
+            className={inputClass}
+          />
+        </Field>
+      </section>
+
+      <section className="space-y-4 rounded-xl border border-neutral-900 bg-neutral-900/40 p-4">
         <h2 className="text-sm font-medium text-neutral-200">Sisi beli</h2>
 
         <div className="grid gap-4 sm:grid-cols-3">

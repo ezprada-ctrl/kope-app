@@ -10,7 +10,12 @@ import {
   bolehTransisi,
   UNIT_STATUS_LABEL,
 } from "@/lib/unit-status";
-import type { DealType, UnitStatus, UnitTipe } from "@/types/database";
+import type {
+  DealType,
+  LossClassification,
+  UnitStatus,
+  UnitTipe,
+} from "@/types/database";
 
 export type FormState = { error?: string } | null;
 
@@ -20,6 +25,7 @@ const DEAL_TYPE_VALID: DealType[] = [
   "mandiri_internal",
   "konsinyasi_fee",
 ];
+const LOSS_VALID: LossClassification[] = ["normal", "kelalaian", "fraud"];
 
 /** Ambil angka rupiah dari FormData. String kosong dianggap 0 (atau null). */
 function angka(formData: FormData, key: string): number;
@@ -52,10 +58,21 @@ function bacaFormUnit(formData: FormData) {
     return { error: "Jenis akad tidak valid." };
   }
 
+  const klasifikasi = teks(formData, "loss_classification") as
+    | LossClassification
+    | null;
+
+  if (klasifikasi && !LOSS_VALID.includes(klasifikasi)) {
+    return { error: "Klasifikasi kerugian tidak valid." };
+  }
+
   const nilai = {
     tipe,
     model,
     deal_type,
+    loss_classification: klasifikasi,
+    loss_justifikasi: teks(formData, "loss_justifikasi"),
+    loss_bearer_id: teks(formData, "loss_bearer_id"),
     kondisi: teks(formData, "kondisi"),
     imei: teks(formData, "imei"),
     kode: teks(formData, "kode"),
