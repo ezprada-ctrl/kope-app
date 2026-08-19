@@ -11,47 +11,47 @@ const NAV: NavItem[] = [
   {
     href: "/dashboard",
     label: "Dashboard",
-    roles: ["super_admin", "admin", "owner_partner", "pemodal"],
+    roles: ["super_admin", "admin", "pemodal"],
   },
   {
     href: "/unit",
     label: "Unit",
-    roles: ["super_admin", "admin", "owner_partner", "pemodal"],
+    roles: ["super_admin", "admin", "pemodal"],
   },
   {
     href: "/modal",
     label: "Modal",
-    roles: ["super_admin", "admin", "owner_partner", "pemodal"],
+    roles: ["super_admin", "admin", "pemodal"],
   },
   {
     href: "/bagi-hasil",
     label: "Bagi hasil",
-    roles: ["super_admin", "admin", "owner_partner", "pemodal"],
+    roles: ["super_admin", "admin", "pemodal"],
   },
   {
     href: "/kas",
     label: "Kas",
-    roles: ["super_admin", "admin", "owner_partner", "pemodal"],
+    roles: ["super_admin", "admin", "pemodal"],
   },
   {
     href: "/kurir",
     label: "Kurir",
-    roles: ["super_admin", "admin", "owner_partner"],
+    roles: ["super_admin", "admin"],
   },
   {
     href: "/deposit",
     label: "Deposit",
-    roles: ["super_admin", "admin", "owner_partner"],
+    roles: ["super_admin", "admin"],
   },
   {
     href: "/rekonsiliasi",
     label: "Rekonsiliasi",
-    roles: ["super_admin", "admin", "owner_partner", "pemodal"],
+    roles: ["super_admin", "admin", "pemodal"],
   },
   {
     href: "/dashboard/financial-summary",
     label: "Ringkasan",
-    roles: ["super_admin", "admin", "owner_partner"],
+    roles: ["super_admin", "admin"],
   },
 ];
 

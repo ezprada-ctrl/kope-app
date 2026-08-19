@@ -84,11 +84,11 @@ export default function PorsiForm({ sekarang }: { sekarang: number }) {
             <dd className="tabular-nums">{formatRupiah(pemodal)}</dd>
           </div>
           <div>
-            <dt className="text-neutral-400">Admin (20% dari sisa)</dt>
+            <dt className="text-neutral-400">Owner 1 (20% dari sisa)</dt>
             <dd className="tabular-nums">{formatRupiah(admin)}</dd>
           </div>
           <div>
-            <dt className="text-neutral-400">Partner (80% dari sisa)</dt>
+            <dt className="text-neutral-400">Owner 2 (80% dari sisa)</dt>
             <dd className="tabular-nums">{formatRupiah(partner)}</dd>
           </div>
         </dl>

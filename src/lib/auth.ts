@@ -4,9 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import type { Profile, UserRole } from "@/types/database";
 
 export const ROLE_LABEL: Record<UserRole, string> = {
-  super_admin: "Super Admin",
-  admin: "Admin (lihat saja)",
-  owner_partner: "Owner Partner",
+  super_admin: "Owner 1 (super admin)",
+  admin: "Owner 2 (lihat saja)",
   pemodal: "Pemodal",
 };
 
@@ -17,7 +16,7 @@ export function bolehTulis(role: UserRole): boolean {
 
 /** Orang dalam KOPE: boleh melihat semua termasuk unit `mandiri_internal`. */
 export function orangDalam(role: UserRole): boolean {
-  return role === "super_admin" || role === "admin" || role === "owner_partner";
+  return role === "super_admin" || role === "admin";
 }
 
 /** Profil user yang sedang login, atau redirect ke /login kalau belum. */
@@ -70,5 +69,5 @@ export async function requirePenulis(): Promise<Profile> {
  * dalam, termasuk unit `mandiri_internal`. Pemodal tidak termasuk.
  */
 export async function requireOrangDalam(): Promise<Profile> {
-  return requireRole("super_admin", "admin", "owner_partner");
+  return requireRole("super_admin", "admin");
 }

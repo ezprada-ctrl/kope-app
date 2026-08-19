@@ -10,7 +10,7 @@
  * finansial di client lalu menimpanya ke DB.
  */
 
-export type UserRole = "super_admin" | "admin" | "owner_partner" | "pemodal";
+export type UserRole = "super_admin" | "admin" | "pemodal";
 
 /** Jenis akad per unit. `mandiri_internal` tidak boleh terlihat pemodal. */
 export type DealType = "mudharabah" | "mandiri_internal" | "konsinyasi_fee";

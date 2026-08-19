@@ -74,7 +74,7 @@ export default async function DashboardPage() {
           value={formatPersen(setting?.pemodal_percentage ?? null)}
           hint={
             setting
-              ? `Sisanya dibagi ${formatPersen(setting.owner_admin_percentage)} admin / ${formatPersen(setting.owner_partner_percentage)} partner`
+              ? `Sisanya dibagi ${formatPersen(setting.owner_admin_percentage)} Owner 1 / ${formatPersen(setting.owner_partner_percentage)} Owner 2`
               : undefined
           }
         />

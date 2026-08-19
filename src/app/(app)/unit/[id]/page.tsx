@@ -220,11 +220,11 @@ export default async function UnitDetailPage(props: PageProps<"/unit/[id]">) {
             value={formatRupiah(split.pemodal_profit)}
           />
           <Baris
-            label={`Admin (${formatPersen(split.owner_admin_percentage)} dari sisa)`}
+            label={`Owner 1 (${formatPersen(split.owner_admin_percentage)} dari sisa)`}
             value={formatRupiah(split.admin_final_profit)}
           />
           <Baris
-            label={`Partner (${formatPersen(split.owner_partner_percentage)} dari sisa)`}
+            label={`Owner 2 (${formatPersen(split.owner_partner_percentage)} dari sisa)`}
             value={formatRupiah(split.partner_final_profit)}
           />
           <p className="mt-3 border-t border-neutral-800 pt-3 text-xs text-neutral-500">

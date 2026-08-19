@@ -69,7 +69,7 @@ export default async function FinancialSummaryPage(
   );
 
   // Kas yang belum "punya pemilik": setelah modal pemodal dan hak
-  // admin/partner dikeluarkan, sisanya baru benar-benar bebas.
+  // hak Owner 1 & Owner 2 dikeluarkan, sisanya baru benar-benar bebas.
   const kasBebas = saldoKas - outstanding - ekuitas;
 
   return (
@@ -102,7 +102,7 @@ export default async function FinancialSummaryPage(
         <Kartu
           label="Ekuitas belum ditarik"
           value={formatRupiah(ekuitas)}
-          hint={`Admin ${formatRupiah(ringkasan?.ekuitas_admin_belum_ditarik ?? 0)} · Partner ${formatRupiah(ringkasan?.ekuitas_partner_belum_ditarik ?? 0)}`}
+          hint={`Owner 1 ${formatRupiah(ringkasan?.ekuitas_admin_belum_ditarik ?? 0)} · Owner 2 ${formatRupiah(ringkasan?.ekuitas_partner_belum_ditarik ?? 0)}`}
         />
         <Kartu
           label="Kas bebas"
@@ -114,7 +114,7 @@ export default async function FinancialSummaryPage(
 
       {kasBebas < 0 && (
         <p className="rounded-lg border border-red-900 bg-red-950/50 px-3 py-2 text-sm text-red-200">
-          Kas bebas negatif: klaim atas kas (modal pemodal + hak admin/partner)
+          Kas bebas negatif: klaim atas kas (modal pemodal + hak dua owner)
           melebihi uang yang benar-benar ada. Cek saldo awal dan rekonsiliasi
           bank.
         </p>

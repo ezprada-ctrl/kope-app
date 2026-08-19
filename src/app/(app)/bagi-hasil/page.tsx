@@ -29,9 +29,12 @@ export default async function BagiHasilPage() {
   const riwayat = splits ?? [];
 
   // Total keuntungan sesuai role yang sedang login.
+  // Owner 1 (super_admin) menerima admin_final_profit, Owner 2 (admin)
+  // menerima partner_final_profit — nama kolomnya warisan dari sebelum
+  // role owner_partner dipensiunkan di migrasi 0017.
   const totalSaya = riwayat.reduce((sum, r) => {
     if (profile.role === "pemodal") return sum + Number(r.pemodal_profit ?? 0);
-    if (profile.role === "owner_partner")
+    if (profile.role === "admin")
       return sum + Number(r.partner_final_profit ?? 0);
     return sum + Number(r.admin_final_profit ?? 0);
   }, 0);
@@ -44,9 +47,9 @@ export default async function BagiHasilPage() {
   const labelSaya =
     profile.role === "pemodal"
       ? "Keuntungan pemodal"
-      : profile.role === "owner_partner"
-        ? "Keuntungan partner"
-        : "Keuntungan admin";
+      : profile.role === "admin"
+        ? "Keuntungan Owner 2"
+        : "Keuntungan Owner 1";
 
   return (
     <div className="space-y-6">
@@ -77,7 +80,7 @@ export default async function BagiHasilPage() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-wide text-neutral-500">
-                Admin
+                Owner 1
               </p>
               <p className="mt-0.5 text-xl font-semibold tabular-nums">
                 {formatPersen(aktif.owner_admin_percentage)}
@@ -86,7 +89,7 @@ export default async function BagiHasilPage() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-wide text-neutral-500">
-                Partner
+                Owner 2
               </p>
               <p className="mt-0.5 text-xl font-semibold tabular-nums">
                 {formatPersen(aktif.owner_partner_percentage)}
@@ -160,8 +163,8 @@ export default async function BagiHasilPage() {
                   <th className="px-4 py-3 font-medium">Settled</th>
                   <th className="px-4 py-3 text-right font-medium">Margin</th>
                   <th className="px-4 py-3 text-right font-medium">Pemodal</th>
-                  <th className="px-4 py-3 text-right font-medium">Admin</th>
-                  <th className="px-4 py-3 text-right font-medium">Partner</th>
+                  <th className="px-4 py-3 text-right font-medium">Owner 1</th>
+                  <th className="px-4 py-3 text-right font-medium">Owner 2</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-900">
