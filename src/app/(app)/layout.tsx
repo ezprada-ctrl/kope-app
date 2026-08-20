@@ -103,7 +103,7 @@ export default async function AppLayout({
             </Link>
 
             <span className="hidden text-neutral-400 sm:inline">
-              {profile.nama} · {ROLE_LABEL[profile.role]}
+              {profile.nama} ({ROLE_LABEL[profile.role]})
             </span>
             <form action={logout}>
               <button

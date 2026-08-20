@@ -4,8 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import type { Profile, UserRole } from "@/types/database";
 
 export const ROLE_LABEL: Record<UserRole, string> = {
-  super_admin: "Owner 1 (super admin)",
-  admin: "Owner 2 (lihat saja)",
+  super_admin: "Super Admin",
+  admin: "Admin — lihat saja",
   pemodal: "Pemodal",
 };
 
