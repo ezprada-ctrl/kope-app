@@ -372,7 +372,8 @@ export type ProfitSplit = {
   unit_id: string;
   tanggal_settle: string;
   margin_bruto: number;
-  profit_share_setting_id: string;
+  /** NULL kalau nisbah berasal dari unit_profit_snapshot, bukan setting lama. */
+  profit_share_setting_id: string | null;
   pemodal_id: string | null;
   pemodal_profit: number;
   admin_pool_profit: number;
