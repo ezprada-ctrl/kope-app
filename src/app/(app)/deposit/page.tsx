@@ -24,6 +24,44 @@ export default async function DepositPage() {
     .limit(100);
 
   const pending = (deposits ?? []).filter((d) => d.status === "pending");
+
+  // Rincian kerugian & katalog komponennya cuma dibutuhkan admin buat
+  // menyelesaikan deposit pending — skip query kalau tidak ada yang pending
+  // atau bukan admin, biar tidak nanya database sia-sia.
+  let komponenAktif: { id: string; nama: string }[] = [];
+  const rincianPerDeposit = new Map<
+    string,
+    { id: string; componentId: string; nama: string; jumlah: number }[]
+  >();
+
+  if (isAdmin && pending.length > 0) {
+    const [{ data: semuaKomponen }, { data: rincian }] = await Promise.all([
+      supabase.from("loss_components").select("id, nama, aktif").order("urutan"),
+      supabase
+        .from("cancellation_loss_items")
+        .select("id, cancellation_deposit_id, component_id, jumlah")
+        .in(
+          "cancellation_deposit_id",
+          pending.map((d) => d.id),
+        ),
+    ]);
+
+    const namaKomponen = new Map((semuaKomponen ?? []).map((k) => [k.id, k.nama]));
+    komponenAktif = (semuaKomponen ?? [])
+      .filter((k) => k.aktif)
+      .map((k) => ({ id: k.id, nama: k.nama }));
+
+    for (const r of rincian ?? []) {
+      const list = rincianPerDeposit.get(r.cancellation_deposit_id) ?? [];
+      list.push({
+        id: r.id,
+        componentId: r.component_id,
+        nama: namaKomponen.get(r.component_id) ?? "?",
+        jumlah: Number(r.jumlah),
+      });
+      rincianPerDeposit.set(r.cancellation_deposit_id, list);
+    }
+  }
   // Yang jadi revenue cuma bagian yang benar-benar hangus (sebesar kerugian
   // riil), bukan seluruh deposit — sisanya wajib dikembalikan ke customer.
   const totalHangus = (deposits ?? [])
@@ -146,7 +184,11 @@ export default async function DepositPage() {
                     {isAdmin && (
                       <td className="px-4 py-3">
                         {d.status === "pending" ? (
-                          <ResolveForm depositId={d.id} />
+                          <ResolveForm
+                            depositId={d.id}
+                            komponen={komponenAktif}
+                            rincian={rincianPerDeposit.get(d.id) ?? []}
+                          />
                         ) : (
                           <span className="text-xs text-neutral-600">—</span>
                         )}

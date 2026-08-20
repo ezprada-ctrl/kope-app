@@ -7,8 +7,10 @@ import { useFormStatus } from "react-dom";
 import {
   catatDeposit,
   resolveDeposit,
+  tambahRincianKerugian,
   type FormState,
 } from "@/app/(app)/deposit/actions";
+import { formatRupiah } from "@/lib/format";
 import { DEPOSIT_DEFAULT, PAYER_LABEL } from "@/lib/kurir";
 import type { CancellationPayer } from "@/types/database";
 
@@ -156,17 +158,89 @@ export function DepositForm({
   );
 }
 
-export function ResolveForm({ depositId }: { depositId: string }) {
-  const [state, formAction] = useActionState<FormState, FormData>(
+function TombolRincian() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="rounded-md border border-neutral-700 bg-neutral-800 px-2 py-1 text-xs text-neutral-200 transition hover:bg-neutral-700 disabled:opacity-60"
+    >
+      {pending ? "…" : "+ Rincian"}
+    </button>
+  );
+}
+
+export function ResolveForm({
+  depositId,
+  komponen,
+  rincian,
+}: {
+  depositId: string;
+  komponen: { id: string; nama: string }[];
+  rincian: { id: string; componentId: string; nama: string; jumlah: number }[];
+}) {
+  const [resolveState, resolveAction] = useActionState<FormState, FormData>(
     resolveDeposit,
     null,
   );
+  const [rincianState, rincianAction] = useActionState<FormState, FormData>(
+    tambahRincianKerugian,
+    null,
+  );
+
+  const sudahDicatat = new Set(rincian.map((r) => r.componentId));
+  const komponenTersisa = komponen.filter((k) => !sudahDicatat.has(k.id));
+  const belumAdaRincian = rincian.length === 0;
 
   return (
-    <form action={formAction} className="space-y-2">
-      <input type="hidden" name="id" value={depositId} />
+    <div className="w-64 space-y-2">
+      {rincian.length > 0 && (
+        <ul className="space-y-0.5">
+          {rincian.map((r) => (
+            <li
+              key={r.id}
+              className="flex items-center justify-between gap-3 text-xs text-neutral-400"
+            >
+              <span>{r.nama}</span>
+              <span className="tabular-nums">{formatRupiah(r.jumlah)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
-      <div className="flex flex-wrap gap-2">
+      {komponenTersisa.length > 0 && (
+        <form action={rincianAction} className="flex flex-wrap items-center gap-1.5">
+          <input type="hidden" name="deposit_id" value={depositId} />
+          <select
+            name="component_id"
+            required
+            className="rounded-md border border-neutral-800 bg-neutral-900 px-1.5 py-1 text-xs text-neutral-300"
+          >
+            {komponenTersisa.map((k) => (
+              <option key={k.id} value={k.id}>
+                {k.nama}
+              </option>
+            ))}
+          </select>
+          <input
+            name="jumlah"
+            type="number"
+            min={1}
+            step={1}
+            required
+            placeholder="Rp"
+            className="w-16 rounded-md border border-neutral-800 bg-neutral-900 px-1.5 py-1 text-xs text-neutral-300"
+          />
+          <TombolRincian />
+        </form>
+      )}
+      {rincianState?.error && (
+        <p className="text-xs text-red-400">{rincianState.error}</p>
+      )}
+
+      <form action={resolveAction} className="flex flex-wrap gap-2 pt-1">
+        <input type="hidden" name="id" value={depositId} />
         <button
           type="submit"
           name="status"
@@ -179,17 +253,23 @@ export function ResolveForm({ depositId }: { depositId: string }) {
           type="submit"
           name="status"
           value="forfeited_as_revenue"
-          className="rounded-lg border border-red-900 bg-red-950/50 px-3 py-1.5 text-xs text-red-200 transition hover:bg-red-950"
+          disabled={belumAdaRincian}
+          title={
+            belumAdaRincian
+              ? "Tambahkan rincian kerugian dulu sebelum bisa dinyatakan hangus."
+              : undefined
+          }
+          className="rounded-lg border border-red-900 bg-red-950/50 px-3 py-1.5 text-xs text-red-200 transition hover:bg-red-950 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-950/50"
         >
           Batal, hangus
         </button>
-      </div>
+      </form>
 
-      {state?.error && (
+      {resolveState?.error && (
         <p className="rounded-lg border border-red-900 bg-red-950/50 px-3 py-2 text-xs text-red-200">
-          {state.error}
+          {resolveState.error}
         </p>
       )}
-    </form>
+    </div>
   );
 }
