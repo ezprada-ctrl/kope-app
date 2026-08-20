@@ -1,10 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { catatRekonsiliasi, type FormState } from "@/app/(app)/rekonsiliasi/actions";
+import {
+  catatRekonsiliasi,
+  ekstrakSaldoDariPdf,
+  type FormState,
+} from "@/app/(app)/rekonsiliasi/actions";
 
 const inputClass =
   "w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm outline-none focus:border-emerald-500";
@@ -22,11 +26,55 @@ function Tombol() {
   );
 }
 
+type PdfStatus =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "info"; pesan: string }
+  | { kind: "error"; pesan: string };
+
 export default function RekonsiliasiForm() {
   const [state, formAction] = useActionState<FormState, FormData>(
     catatRekonsiliasi,
     null,
   );
+
+  const tanggalRef = useRef<HTMLInputElement>(null);
+  const saldoRef = useRef<HTMLInputElement>(null);
+  const [pdfStatus, setPdfStatus] = useState<PdfStatus>({ kind: "idle" });
+
+  async function handlePdfChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // biar bisa upload file yang sama lagi kalau perlu
+    if (!file) return;
+
+    const tanggal = tanggalRef.current?.value;
+    if (!tanggal) {
+      setPdfStatus({ kind: "error", pesan: "Pilih tanggal saldo dulu sebelum upload PDF." });
+      return;
+    }
+
+    setPdfStatus({ kind: "loading" });
+    const fd = new FormData();
+    fd.set("tanggal", tanggal);
+    fd.set("pdf", file);
+
+    const hasil = await ekstrakSaldoDariPdf(null, fd);
+
+    if (hasil?.status === "ok") {
+      if (saldoRef.current) saldoRef.current.value = String(hasil.saldo);
+      setPdfStatus({
+        kind: "info",
+        pesan: `Saldo diambil dari transaksi terakhir di PDF: ${hasil.tanggalLabel}${
+          hasil.waktuLabel ? ", " + hasil.waktuLabel : ""
+        }. Cek dulu sebelum simpan — kalau ada transaksi sesudahnya yang belum masuk PDF, sesuaikan manual.`,
+      });
+    } else {
+      setPdfStatus({
+        kind: "error",
+        pesan: hasil?.status === "error" ? hasil.error : "Gagal memproses PDF.",
+      });
+    }
+  }
 
   return (
     <form action={formAction} className="space-y-4">
@@ -40,6 +88,7 @@ export default function RekonsiliasiForm() {
             name="tanggal"
             type="date"
             required
+            ref={tanggalRef}
             defaultValue={new Date().toISOString().slice(0, 10)}
             className={inputClass}
           />
@@ -58,8 +107,31 @@ export default function RekonsiliasiForm() {
             type="number"
             step={1}
             required
+            ref={saldoRef}
             className={inputClass}
           />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label htmlFor="pdf_mutasi" className="mb-1.5 block text-sm text-neutral-300">
+            Atau isi otomatis dari PDF mutasi Jago
+          </label>
+          <input
+            id="pdf_mutasi"
+            type="file"
+            accept="application/pdf"
+            onChange={handlePdfChange}
+            className="block w-full text-sm text-neutral-400 file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-800 file:px-3 file:py-2 file:text-sm file:text-neutral-200 hover:file:bg-neutral-700"
+          />
+          {pdfStatus.kind === "loading" && (
+            <p className="mt-1.5 text-xs text-neutral-500">Membaca PDF…</p>
+          )}
+          {pdfStatus.kind === "info" && (
+            <p className="mt-1.5 text-xs text-emerald-400">{pdfStatus.pesan}</p>
+          )}
+          {pdfStatus.kind === "error" && (
+            <p className="mt-1.5 text-xs text-red-400">{pdfStatus.pesan}</p>
+          )}
         </div>
 
         <div className="sm:col-span-2">
