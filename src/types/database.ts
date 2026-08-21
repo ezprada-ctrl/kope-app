@@ -225,6 +225,8 @@ export type Unit = {
   tanggal_settle: string | null;
   catatan: string | null;
   dicatat_oleh: string | null;
+  /** Data latihan/demo, cuma diisi lewat script seed. Lihat migrasi 0021. */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -254,6 +256,8 @@ export type PemodalLedger = {
   catatan: string | null;
   koreksi_dari_id: string | null;
   dicatat_oleh: string | null;
+  /** Data latihan/demo, cuma diisi lewat script seed. Lihat migrasi 0021. */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -265,6 +269,8 @@ export type CourierMaster = {
   aktif: boolean;
   tanggal_bergabung: string;
   catatan: string | null;
+  /** Data latihan/demo, cuma diisi lewat script seed. Lihat migrasi 0021. */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -286,6 +292,8 @@ export type CourierTransaction = {
   catatan: string | null;
   koreksi_dari_id: string | null;
   dicatat_oleh: string | null;
+  /** Data latihan/demo, cuma diisi lewat script seed. Lihat migrasi 0021. */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -309,6 +317,8 @@ export type CancellationDeposit = {
   catatan: string | null;
   koreksi_dari_id: string | null;
   dicatat_oleh: string | null;
+  /** Data latihan/demo, cuma diisi lewat script seed. Lihat migrasi 0021. */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -381,6 +391,8 @@ export type ProfitSplit = {
   partner_final_profit: number;
   payout_status: PayoutStatus;
   tanggal_payout: string | null;
+  /** Data latihan/demo, diteruskan otomatis dari units.is_dummy oleh settle_unit(). */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -393,6 +405,8 @@ export type LossAllocation = {
   total_rugi: number;
   catatan: string | null;
   dicatat_oleh: string | null;
+  /** Data latihan/demo, diteruskan otomatis dari units.is_dummy oleh settle_unit(). */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -422,6 +436,8 @@ export type BankReconciliation = {
   catatan: string | null;
   koreksi_dari_id: string | null;
   dicatat_oleh: string | null;
+  /** Data latihan/demo, cuma diisi lewat script seed. Lihat migrasi 0021. */
+  is_dummy: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -486,7 +502,16 @@ export type OperationalExpense = {
   bukti_url: string | null;
   koreksi_dari_id: string | null;
   dicatat_oleh: string | null;
+  /** Data latihan/demo, cuma diisi lewat script seed. Lihat migrasi 0021. */
+  is_dummy: boolean;
   created_at: string;
+  updated_at: string;
+};
+
+/** Satu baris konfigurasi global. id selalu true (dipaksa CHECK). */
+export type AppSettings = {
+  id: true;
+  tampilkan_data_dummy: boolean;
   updated_at: string;
 };
 
@@ -566,6 +591,8 @@ type Generated =
   | "realized_loss"
   | "whitelist_biaya"
   | "dikunci_pada"
+  // form aplikasi tidak pernah mengirim ini — cuma script seed
+  | "is_dummy"
   // punya DEFAULT di DB
   | "status"
   | "aktif"
@@ -604,6 +631,7 @@ export type Database = {
   public: {
     Tables: {
       profiles: Table<Profile>;
+      app_settings: Table<AppSettings>;
       plafon_settings: Table<PlafonSetting>;
       units: Table<Unit>;
       pemodal_ledger: Table<PemodalLedger>;
@@ -703,6 +731,10 @@ export type Database = {
       jumlah_notif_belum_dibaca: {
         Args: Record<string, never>;
         Returns: number;
+      };
+      atur_tampilan_data_dummy: {
+        Args: { p_tampilkan: boolean };
+        Returns: AppSettings;
       };
     };
     Enums: {

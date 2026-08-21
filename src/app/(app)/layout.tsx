@@ -53,6 +53,11 @@ const NAV: NavItem[] = [
     label: "Ringkasan",
     roles: ["super_admin", "admin"],
   },
+  {
+    href: "/data-dummy",
+    label: "Data dummy",
+    roles: ["super_admin"],
+  },
 ];
 
 export default async function AppLayout({
