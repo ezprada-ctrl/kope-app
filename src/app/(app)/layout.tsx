@@ -58,6 +58,11 @@ const NAV: NavItem[] = [
     label: "Data dummy",
     roles: ["super_admin"],
   },
+  {
+    href: "/dev",
+    label: "Dev",
+    roles: ["super_admin"],
+  },
 ];
 
 export default async function AppLayout({
