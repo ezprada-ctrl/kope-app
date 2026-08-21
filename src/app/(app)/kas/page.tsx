@@ -12,9 +12,14 @@ export default async function KasPage() {
   const supabase = await createClient();
 
   const [{ data: kas, error }, { data: saldo }] = await Promise.all([
+    // Urutan HARUS sama persis dengan window `order by tanggal, urutan` yang
+    // dipakai v_cash_ledger_running untuk menghitung saldo_running — cuma
+    // dibalik. Mengurutkan pakai `urutan` saja bikin baris teracak relatif
+    // terhadap deret saldonya, dan kolom Saldo jadi lompat-lompat.
     supabase
       .from("v_cash_ledger_running")
       .select("*")
+      .order("tanggal", { ascending: false })
       .order("urutan", { ascending: false })
       .limit(200),
     supabase.rpc("saldo_kas_sekarang"),

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { bolehTulis, requireProfile } from "@/lib/auth";
+import { tanggalLokalISO } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { CourierTxStatus, CourierTxTipe } from "@/types/database";
 
@@ -52,7 +53,7 @@ export async function simpanKurir(
         ...nilai,
         tanggal_bergabung:
           String(formData.get("tanggal_bergabung") ?? "").trim() ||
-          new Date().toISOString().slice(0, 10),
+          tanggalLokalISO(),
       });
 
   if (error) return { error: `Gagal menyimpan: ${error.message}` };

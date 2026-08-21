@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { bolehTulis, requireProfile } from "@/lib/auth";
+import { tanggalLokalISO } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import {
   BUTUH_HARGA_JUAL,
@@ -222,7 +223,7 @@ export async function ubahStatusUnit(
   };
 
   if (tujuan === "delivered_paid" && !unit.tanggal_jual) {
-    patch.tanggal_jual = new Date().toISOString().slice(0, 10);
+    patch.tanggal_jual = tanggalLokalISO();
   }
 
   const { error } = await supabase.from("units").update(patch).eq("id", id);

@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { catatPengeluaran, catatSaldoAwal, type FormState } from "@/app/(app)/kas/actions";
+import { tanggalLokalISO } from "@/lib/format";
 import { EXPENSE_KATEGORI_LABEL } from "@/lib/kas";
 import type { ExpenseKategori } from "@/types/database";
 
@@ -81,7 +82,7 @@ export function PengeluaranForm() {
             id="tanggal"
             name="tanggal"
             type="date"
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue={tanggalLokalISO()}
             className={inputClass}
           />
         </div>
@@ -160,7 +161,7 @@ export function SaldoAwalForm() {
             id="tanggal"
             name="tanggal"
             type="date"
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue={tanggalLokalISO()}
             className={inputClass}
           />
         </div>

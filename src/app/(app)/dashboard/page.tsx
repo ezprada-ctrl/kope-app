@@ -80,14 +80,6 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <div className="rounded-xl border border-neutral-900 bg-neutral-900/40 p-4 text-sm text-neutral-400">
-        <p className="font-medium text-neutral-200">Fase 1 selesai</p>
-        <p className="mt-1">
-          Skema database, RLS 3 role, dan audit log sudah aktif. Menu unit,
-          capital call, profit split, kurir, dan rekonsiliasi bank menyusul di
-          fase berikutnya.
-        </p>
-      </div>
     </div>
   );
 }

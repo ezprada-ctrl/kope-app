@@ -10,7 +10,7 @@ import {
   tambahRincianKerugian,
   type FormState,
 } from "@/app/(app)/deposit/actions";
-import { formatRupiah } from "@/lib/format";
+import { formatRupiah, tanggalLokalISO } from "@/lib/format";
 import { DEPOSIT_DEFAULT, PAYER_LABEL } from "@/lib/kurir";
 import type { CancellationPayer } from "@/types/database";
 
@@ -107,7 +107,7 @@ export function DepositForm({
             id="tanggal"
             name="tanggal"
             type="date"
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue={tanggalLokalISO()}
             className={inputClass}
           />
         </div>

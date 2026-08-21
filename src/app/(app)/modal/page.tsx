@@ -193,7 +193,14 @@ export default async function ModalPage() {
                           : "text-emerald-300"
                       }`}
                     >
-                      {l.tipe === "capital_call" ? "+" : "−"}
+                      {/* Tanda +/− di kolom ini berarti efek ke OUTSTANDING
+                          modal, bukan arah kas. Bagi hasil tidak mengubah
+                          outstanding sepeser pun (lihat delta_outstanding di
+                          v_pemodal_ledger_running), jadi sengaja tanpa tanda —
+                          dulu diberi "−" dan terbaca seolah modal pemodal
+                          berkurang sebesar bagi hasil yang dia terima. */}
+                      {l.tipe === "capital_call" && "+"}
+                      {l.tipe === "return_of_capital" && "−"}
                       {formatRupiah(l.jumlah).replace("Rp", "Rp ")}
                     </td>
                   </tr>

@@ -1,18 +1,18 @@
 import Link from "next/link";
 
 import { requireOrangDalam } from "@/lib/auth";
-import { formatRupiah } from "@/lib/format";
+import { formatRupiah, tanggalLokalISO } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Ringkasan finansial" };
 
 function awalBulanIni() {
   const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10);
+  return tanggalLokalISO(new Date(d.getFullYear(), d.getMonth(), 1));
 }
 
 function hariIni() {
-  return new Date().toISOString().slice(0, 10);
+  return tanggalLokalISO();
 }
 
 function Kartu({

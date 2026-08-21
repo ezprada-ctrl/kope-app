@@ -9,7 +9,7 @@ import {
   simpanTransaksiKurir,
   type FormState,
 } from "@/app/(app)/kurir/actions";
-import { formatRupiah } from "@/lib/format";
+import { formatRupiah, tanggalLokalISO } from "@/lib/format";
 import { COURIER_STATUS_LABEL, COURIER_TIPE_LABEL } from "@/lib/kurir";
 import type {
   CourierMaster,
@@ -91,7 +91,7 @@ export function KurirForm({ kurir }: { kurir?: CourierMaster }) {
               id="tanggal_bergabung"
               name="tanggal_bergabung"
               type="date"
-              defaultValue={new Date().toISOString().slice(0, 10)}
+              defaultValue={tanggalLokalISO()}
               className={inputClass}
             />
           </div>
@@ -247,7 +247,7 @@ export function TransaksiKurirForm({
             id="tanggal"
             name="tanggal"
             type="date"
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue={tanggalLokalISO()}
             className={inputClass}
           />
         </div>

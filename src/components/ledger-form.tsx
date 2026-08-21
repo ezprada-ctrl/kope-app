@@ -5,7 +5,7 @@ import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { catatLedger, type FormState } from "@/app/(app)/modal/actions";
-import { formatRupiah } from "@/lib/format";
+import { formatRupiah, tanggalLokalISO } from "@/lib/format";
 
 type Opsi = { id: string; label: string };
 
@@ -125,7 +125,7 @@ export default function LedgerForm({
             id="tanggal"
             name="tanggal"
             type="date"
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue={tanggalLokalISO()}
             className={inputClass}
           />
         </div>

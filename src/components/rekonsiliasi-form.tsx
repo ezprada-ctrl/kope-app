@@ -9,6 +9,7 @@ import {
   ekstrakSaldoDariPdf,
   type FormState,
 } from "@/app/(app)/rekonsiliasi/actions";
+import { tanggalLokalISO } from "@/lib/format";
 
 const inputClass =
   "w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm outline-none focus:border-emerald-500";
@@ -89,7 +90,7 @@ export default function RekonsiliasiForm() {
             type="date"
             required
             ref={tanggalRef}
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue={tanggalLokalISO()}
             className={inputClass}
           />
         </div>

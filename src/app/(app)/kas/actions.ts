@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { bolehTulis, requireProfile } from "@/lib/auth";
+import { tanggalLokalISO } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { CashKategori, ExpenseKategori } from "@/types/database";
 
@@ -43,7 +44,7 @@ export async function catatPengeluaran(
   const { error } = await supabase.from("operational_expenses").insert({
     kategori,
     jumlah,
-    tanggal: tanggal === "" ? new Date().toISOString().slice(0, 10) : tanggal,
+    tanggal: tanggal === "" ? tanggalLokalISO() : tanggal,
     deskripsi: String(formData.get("deskripsi") ?? "").trim() || null,
     bukti_url: String(formData.get("bukti_url") ?? "").trim() || null,
   });
