@@ -158,6 +158,47 @@ export default async function DevPage() {
       />
 
       <Catatan
+        nada="penting"
+        judul="Kalau nanti bikin export Excel — jangan pakai service_role"
+        anak={
+          <>
+            <p>
+              Export wajib lewat{" "}
+              <code className="text-neutral-300">createClient()</code> dari{" "}
+              <code className="text-neutral-300">@/lib/supabase/server</code>,
+              sama seperti semua halaman. RLS berlaku, data dummy tersaring
+              sendiri. Kalau pakai{" "}
+              <code className="text-neutral-300">createServiceClient()</code>{" "}
+              — tergoda karena export butuh data lintas user dan contohnya
+              sudah ada di cron backup — RLS dilewati total dan data dummy ikut
+              masuk file <strong className="text-neutral-300">meskipun
+              togglenya sudah dimatikan</strong>.
+            </p>
+            <p>
+              Export lebih berisiko daripada halaman biasa: halaman yang salah
+              tinggal di-refresh, sedangkan file Excel yang salah sudah terkirim
+              ke pemodal atau akuntan, dan angka dummy di dalamnya tidak
+              bertanda apa pun.
+            </p>
+            <p>Tiga pengaman yang harus ikut dibangun:</p>
+            <ul className="list-disc space-y-1 pl-4">
+              <li>Selalu lewat client terautentikasi, jangan service_role.</li>
+              <li>
+                Cek <code className="text-neutral-300">dummy_data_visible()</code>{" "}
+                sebelum menulis file — kalau masih nyala, tolak, atau paksa
+                stempel mencolok di baris pertama sheet.
+              </li>
+              <li>
+                Tandai nama filenya, misalnya{" "}
+                <code className="text-neutral-300">…-DUMMY.xlsx</code>, supaya
+                ketahuan tanpa perlu dibuka.
+              </li>
+            </ul>
+          </>
+        }
+      />
+
+      <Catatan
         judul="Sembunyikan ≠ hapus"
         anak={
           <p>
