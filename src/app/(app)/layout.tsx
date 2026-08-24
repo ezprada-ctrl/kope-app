@@ -68,11 +68,15 @@ const NAV: NavItem[] = [
 export default async function AppLayout({
   children,
 }: LayoutProps<"/">) {
-  const profile = await requireProfile();
-  const items = NAV.filter((i) => i.roles.includes(profile.role));
-
+  // Hitungan notifikasi tidak bergantung pada profil, jadi jangan menunggu
+  // giliran di belakangnya — dua round-trip ini jalan barengan.
   const supabase = await createClient();
-  const { data: belumDibaca } = await supabase.rpc("jumlah_notif_belum_dibaca");
+  const [profile, { data: belumDibaca }] = await Promise.all([
+    requireProfile(),
+    supabase.rpc("jumlah_notif_belum_dibaca"),
+  ]);
+
+  const items = NAV.filter((i) => i.roles.includes(profile.role));
 
   return (
     <div className="flex min-h-dvh flex-col bg-neutral-950 text-neutral-100">

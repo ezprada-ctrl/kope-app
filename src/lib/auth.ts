@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -19,8 +20,16 @@ export function orangDalam(role: UserRole): boolean {
   return role === "super_admin" || role === "admin";
 }
 
-/** Profil user yang sedang login, atau redirect ke /login kalau belum. */
-export async function requireProfile(): Promise<Profile> {
+/**
+ * Profil user yang sedang login, atau redirect ke /login kalau belum.
+ *
+ * Dibungkus `cache()` React: layout dan page sama-sama memanggil ini untuk
+ * SATU request yang sama, dan tanpa memoisasi keduanya menembak
+ * `auth.getUser()` + query `profiles` sendiri-sendiri — empat round-trip ke
+ * Supabase, bukan dua. `cache()` hanya berlaku di dalam satu render request,
+ * jadi tidak ada profil yang bocor antar user atau antar request.
+ */
+export const requireProfile = cache(async function (): Promise<Profile> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -46,7 +55,7 @@ export async function requireProfile(): Promise<Profile> {
   }
 
   return profile;
-}
+});
 
 /** Batasi halaman ke role tertentu. RLS tetap jadi penjaga terakhir di DB. */
 export async function requireRole(...roles: UserRole[]): Promise<Profile> {
